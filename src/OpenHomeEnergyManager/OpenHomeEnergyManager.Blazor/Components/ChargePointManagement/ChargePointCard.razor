@@ -1,0 +1,67 @@
+﻿@using System.Timers
+<MudCard>
+    <MudCardMedia Image="@($"img/EV/{ChargePoint.Image}")" Height="200" />
+    <MudCardContent>
+        <MudText>@ChargePoint.Name</MudText>
+        <MudText>Power: @Power W</MudText>
+        <MudText>Current: @Current A</MudText>
+        <MudChart ChartType="ChartType.Line" ChartSeries="@Series" XAxisLabels="@XAxisLabels"></MudChart>
+    </MudCardContent>
+    <MudCardActions>
+        <MudButton Variant="Variant.Text" Color="Color.Primary">Direct Charge</MudButton>
+        <MudButton Variant="Variant.Text" Color="Color.Primary">More</MudButton>
+    </MudCardActions>
+</MudCard>
+
+
+@code {
+    [Parameter] public ChargePointDto ChargePoint { get; set; }
+
+    [Inject] private ChargePointClient _chargePointClient { get; set; }
+
+    public int Power { get; set; }
+    public int Current { get; set; }
+
+    public List<ChartSeries> Series = new List<ChartSeries>()
+{
+    new ChartSeries() { Name = "Serie 1", Data = new double[] { 90, 79, 72, 69, 62, 62, 55, 65, 70 } },
+    new ChartSeries() { Name = "Serie 2", Data = new double[] { 10, 41, 35, 51, 49, 62, 69, 91, 148 } },
+    };
+    public string[] XAxisLabels = { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep" };
+
+
+    protected override void OnInitialized()
+    {
+        Timer timer = new Timer();
+        timer.Interval = TimeSpan.FromSeconds(1).TotalMilliseconds;
+        timer.Elapsed += TimerElapsed;
+        timer.Enabled = true;
+    }
+    
+    private void TimerElapsed(object sender, ElapsedEventArgs e)
+    {
+        InvokeAsync(async () => await UpdateData());
+    }
+
+    Random random = new Random();
+    public async Task UpdateData()
+    {
+        var currentData = await _chargePointClient.GetCurrentDataAsync(ChargePoint.Id);
+        Power = currentData.Power;
+        Current = currentData.ConfiguredCurrent;
+
+        var new_series = new List<ChartSeries>()
+    {
+        new ChartSeries() { Name = "Serie 1", Data = new double[9] },
+        new ChartSeries() { Name = "Serie 2", Data = new double[9] },
+    };
+
+        for (int i = 0; i < 9; i++)
+        {
+            new_series[0].Data[i] = random.NextDouble() * 100;
+            new_series[1].Data[i] = random.NextDouble() * 100;
+        }
+        Series = new_series;
+        StateHasChanged();
+    }
+}

@@ -1,0 +1,15 @@
+version: '3.4'
+
+services:
+  openhomeenergymanager.blazor:
+    image: ${DOCKER_REGISTRY-}openhomeenergymanagerblazor
+    build:
+      context: .
+      dockerfile: OpenHomeEnergyManager.Blazor/Dockerfile
+
+  openhomeenergymanager.api:
+    image: ${DOCKER_REGISTRY-}openhomeenergymanagerapi
+    build:
+      context: .
+      dockerfile: OpenHomeEnergyManager.Api/Dockerfile
+

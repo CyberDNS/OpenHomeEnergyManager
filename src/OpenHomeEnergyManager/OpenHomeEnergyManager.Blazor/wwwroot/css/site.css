@@ -1,0 +1,18 @@
+﻿.settings-drawer-open .fab-button-bottom-right {
+    position: fixed;
+    right: 270px;
+    bottom: 30px;
+}
+
+.fab-button-bottom-right {
+    position: fixed;
+    right: 30px;
+    bottom: 30px;
+}
+
+.mudblazor-appbar-band {
+    background-image: url(img/AppbarCorner.svg);
+    background-repeat: no-repeat;
+    background-position: top right;
+    overflow: hidden;
+}

@@ -1,0 +1,111 @@
+﻿@inject IDialogService Dialog
+
+@if (_moduleServiceDefinitions == null)
+{
+    <MudGrid Justify="Justify.Center">
+        <MudProgressCircular Color="Color.Primary" Style="height:70px;width:70px;" Indeterminate="true" />
+    </MudGrid>
+}
+else
+{
+
+    <EditForm Model="@Model" OnValidSubmit="OnValidSubmit">
+        <DataAnnotationsValidator />
+        <MudCard>
+            <MudCardContent>
+                <MudSelect T="ModuleServiceDefinitionDto" Value="@Model.ModuleServiceDefinition" ValueChanged="@OnModuleServiceDefinitionChanged" Label="Type">
+                    @foreach (var definition in _moduleServiceDefinitions)
+                    {
+                        <MudSelectItem Value="definition">@definition.Name</MudSelectItem>
+                    }
+                </MudSelect>
+                <MudTextField Label="Name" @bind-Value="Model.Name" For="@(() => Model.Name)" Variant="Variant.Text" />
+                @if (Model.ModuleServiceDefinition is not null)
+                {
+                    foreach (var setting in Model.ModuleServiceDefinition.Settings)
+                    {
+                        if (setting.Value.Equals("text", StringComparison.OrdinalIgnoreCase))
+                        {
+                            <MudTextField T="string" @bind-Value="Model.Settings[setting.Key]" Label="@setting.Key" Variant="Variant.Text" />
+                        }
+                    }
+                }
+            </MudCardContent>
+            <MudCardActions Class="d-flex justify-end py-2 px-1 mt-6">
+                @if (_isNew)
+                {
+                    <MudButton Variant="Variant.Filled" Color="Color.Warning" Class="pa-2 mx-2" OnClick="OnAddCanceled">Cancel</MudButton>
+                    <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Class="pa-2 mx-2">Save</MudButton>
+                }
+                else
+                {
+                    <MudButton Variant="Variant.Filled" Color="Color.Error" Class="pa-2 mx-2" OnClick="OnDelete">Delete</MudButton>
+                    <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Info" Class="pa-2 mx-2">Apply</MudButton>
+                }
+            </MudCardActions>
+        </MudCard>
+    </EditForm>
+}
+
+@code {
+    [Inject] private ModuleClient _moduleClient { get; set; }
+    [Inject] private ModuleServiceDefinitionClient _moduleServiceDefinitionClient { get; set; }
+    private IEnumerable<ModuleServiceDefinitionDto> _moduleServiceDefinitions { get; set; }
+
+    [Parameter] public ModuleDto Model { get; set; }
+
+    [Parameter] public EventHandler<ModuleDto> OnModuleRemoved { get; set; }
+
+
+    private bool _isNew => Model.Id == default(Int32);
+
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            _moduleServiceDefinitions = await _moduleServiceDefinitionClient.GetAllAsync();
+            Model.ModuleServiceDefinition = _moduleServiceDefinitions.Where(d => d.Key.Equals(Model.ModuleServiceDefinitionKey)).SingleOrDefault();
+            StateHasChanged();
+        }
+    }
+
+    private void OnModuleServiceDefinitionChanged(ModuleServiceDefinitionDto selectedModuleServiceDefinition)
+    {
+        Model.Settings = selectedModuleServiceDefinition.Settings.ToDictionary(k => k.Key, k => "");
+        Model.ModuleServiceDefinition = selectedModuleServiceDefinition;
+    }
+
+    private async Task OnValidSubmit(EditContext context)
+    {
+        if (_isNew)
+        {
+            int id = (await _moduleClient.AddAsync(Model)).Id;
+            Model.Id = id;
+        }
+        else
+        {
+            await _moduleClient.UpdateAsync(Model);
+        }
+    }
+
+    private void OnAddCanceled()
+    {
+        OnModuleRemoved.Invoke(this, Model);
+    }
+
+    private async Task OnDelete()
+    {
+        DialogParameters parameters = new DialogParameters();
+        parameters.Add("DialogMessage", $"Do you want to delete the module {Model.Name}?");
+
+        var dialog = Dialog.Show<ConfirmationDialog>("Please confirm", parameters: parameters);
+        var result = await dialog.Result;
+
+        if (!result.Cancelled)
+        {
+            await _moduleClient.DeleteAsync(Model);
+            OnModuleRemoved.Invoke(this, Model);
+        }
+    }
+}

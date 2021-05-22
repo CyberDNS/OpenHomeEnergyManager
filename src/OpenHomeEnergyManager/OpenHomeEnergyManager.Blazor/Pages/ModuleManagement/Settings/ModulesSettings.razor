@@ -1,0 +1,60 @@
+﻿@page "/settings/module-management/modules"
+
+<MudContainer MaxWidth="MaxWidth.ExtraLarge" Class="mt-6">
+    @if (_modules == null)
+    {
+        <MudGrid Justify="Justify.Center">
+            <MudProgressCircular Color="Color.Primary" Style="height:70px;width:70px;" Indeterminate="true" />
+        </MudGrid>
+    }
+    else
+    {
+        <MudGrid Justify="Justify.Center">
+            @foreach (var module in _modules)
+            {
+                <MudItem xs="12" md="6" lg="3">
+                    <ModuleSettingsCard Model="module" OnModuleRemoved="OnModuleRemoved" />
+                </MudItem>
+            }
+        </MudGrid>
+    }
+</MudContainer>
+
+<MudFab Color="Color.Primary" Icon="@Icons.Filled.Add" Class="fab-button-bottom-right" OnClick="AddModule" />
+
+@code {
+    [Inject] private ModuleClient _moduleClient { get; set; }
+
+    private IList<ModuleDto> _modules;
+
+    private string _restartButton = "Restart";
+
+    protected override async Task OnParametersSetAsync()
+    {
+        _modules = (await _moduleClient.GetAllAsync()).ToList();
+
+        await Task.CompletedTask;
+    }
+
+    private void AddModule()
+    {
+        _modules.Add(new ModuleDto());
+    }
+
+    public void OnModuleRemoved(object target, ModuleDto module)
+    {
+        _modules.Remove(module);
+        StateHasChanged();
+    }
+
+    public async Task OnRestart()
+    {
+        _restartButton = "Restarting...";
+        StateHasChanged();
+
+        await _moduleClient.RestartModules();
+
+        _restartButton = "Restart";
+        StateHasChanged();
+    }
+}

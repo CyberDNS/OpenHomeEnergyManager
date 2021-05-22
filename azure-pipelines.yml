@@ -1,0 +1,49 @@
+# Docker
+# Build a Docker image
+# https://docs.microsoft.com/azure/devops/pipelines/languages/docker
+
+trigger:
+- master
+
+resources:
+- repo: self
+
+variables:
+  tag: '$(Build.BuildId)'
+
+stages:
+- stage: Build
+  displayName: Build image
+  jobs:
+  - job: Build
+    displayName: Build
+    pool:
+      name: Default
+      demands:
+      - agent.name -equals deploy-agent-1
+    steps:
+    - task: Docker@2
+      displayName: Build docker image - OpenHomeEnergyManager.Api
+      inputs:
+        repository: 'openhomeenergymanagerapi'
+        command: 'build'
+        Dockerfile: 'src/OpenHomeEnergyManager/OpenHomeEnergyManager.Api/Dockerfile'
+        buildContext: 'src/OpenHomeEnergyManager/'
+        tags: |
+          latest-dev
+          $(Build.BuildId)
+    - task: Docker@2
+      displayName: Build docker image - OpenHomeEnergyManager.Blazor
+      inputs:
+        repository: 'openhomeenergymanagerblazor'
+        command: 'build'
+        Dockerfile: 'src/OpenHomeEnergyManager/OpenHomeEnergyManager.Blazor/Dockerfile'
+        buildContext: 'src/OpenHomeEnergyManager/'
+        tags: |
+          latest-dev
+          $(Build.BuildId)
+    - task: PublishPipelineArtifact@1
+      inputs:
+        targetPath: '$(Pipeline.Workspace)/s/deploy/docker-compose/'
+        artifact: 'Docker Compose Files'
+        publishLocation: 'pipeline'

@@ -1,0 +1,15 @@
+version: '3.4'
+
+services:
+  openhomeenergymanager.blazor:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    ports:
+      - "5000:80"
+
+  openhomeenergymanager.api:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    ports:
+      - "5001:80"
+

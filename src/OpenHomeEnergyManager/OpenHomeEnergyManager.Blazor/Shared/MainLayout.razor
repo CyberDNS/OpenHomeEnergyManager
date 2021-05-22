@@ -1,0 +1,30 @@
+﻿@inherits LayoutComponentBase
+
+<MudThemeProvider Theme="new DefaultTheme()" />
+<MudDialogProvider />
+<MudSnackbarProvider />
+
+<MudLayout Class="@(_settingsMenuOpen ? "settings-drawer-open" : "")">
+    <MudAppBar Elevation="0">
+        <MudIconButton Icon="@Icons.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => _navMenuOpen = !_navMenuOpen)" />
+        <MudAppBarSpacer />
+        <MudIconButton Icon="@Icons.Filled.Settings" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => _settingsMenuOpen = !_settingsMenuOpen)" />
+    </MudAppBar>
+    <MudDrawer @bind-Open="_navMenuOpen" Elevation="6">
+        <MudDrawerHeader Class="mudblazor-appbar-band">
+            <img src="img/logo.svg" class="logo" />
+        </MudDrawerHeader>
+        <NavMenu />
+    </MudDrawer>
+    <MudDrawer @bind-Open="_settingsMenuOpen" Anchor="Anchor.Right" Clipped="true" Elevation="1">
+        <SettingsMenu />
+    </MudDrawer>
+    <MudMainContent>
+        @Body
+    </MudMainContent>
+</MudLayout>
+
+@code {
+    bool _navMenuOpen = true;
+    bool _settingsMenuOpen = false;
+}

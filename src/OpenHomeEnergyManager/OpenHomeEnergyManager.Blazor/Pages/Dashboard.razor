@@ -1,0 +1,33 @@
+﻿@page "/dashboard"
+
+<MudContainer MaxWidth="MaxWidth.ExtraLarge" Class="mt-6">
+    @if (_chargePoints == null)
+    {
+        <MudGrid Justify="Justify.Center">
+            <MudProgressCircular Color="Color.Primary" Style="height:70px;width:70px;" Indeterminate="true" />
+        </MudGrid>
+    }
+    else
+    {
+        <MudGrid Justify="Justify.Center">
+            @foreach (var chargePoint in _chargePoints)
+            {
+                <MudItem xs="12" md="6" lg="3">
+                    <ChargePointCard ChargePoint="chargePoint" />
+                </MudItem>
+            }
+        </MudGrid>
+    }
+</MudContainer>
+
+@code {
+
+    [Inject] private ChargePointClient _chargePointClient { get; set; }
+
+    private IList<ChargePointDto> _chargePoints = null;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        _chargePoints = (await _chargePointClient.GetAllAsync()).ToList();
+    }
+}

@@ -1,0 +1,67 @@
+﻿@inject IDialogService Dialog
+
+<EditForm Model="@Model" OnValidSubmit="OnValidSubmit">
+    <DataAnnotationsValidator />
+    <MudCard>
+        <MudCardMedia Image="@($"img/EV/{Model.Image}")" Height="200" />
+        <MudCardContent>
+            <MudTextField Label="Name" @bind-Value="Model.Name" For="@(() => Model.Name)" Variant="Variant.Text" />
+            @*<MudTextField Label="Host" Class="mt-3" @bind-Value="Model.Host" For="@(() => Model.Host)" Variant="Variant.Text" />*@
+        </MudCardContent>
+        <MudCardActions Class="d-flex justify-end py-2 px-1 mt-6">
+            @if (_isNew)
+            {
+                <MudButton Variant="Variant.Filled" Color="Color.Warning" Class="pa-2 mx-2" OnClick="OnAddCanceled">Cancel</MudButton>
+                <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Class="pa-2 mx-2">Save</MudButton>
+            }
+            else
+            {
+                <MudButton Variant="Variant.Filled" Color="Color.Error" Class="pa-2 mx-2" OnClick="OnDelete">Delete</MudButton>
+                <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Info" Class="pa-2 mx-2">Apply</MudButton>
+            }
+        </MudCardActions>
+    </MudCard>
+</EditForm>
+
+@code {
+    [Inject] private ChargePointClient _chargePointClient { get; set; }
+
+    [Parameter] public ChargePointDto Model { get; set; }
+
+    [Parameter] public EventHandler<ChargePointDto> OnChargePointRemoved { get; set; }
+
+    private bool _isNew => Model.Id == default(Int32);
+
+    private async Task OnValidSubmit(EditContext context)
+    {
+        if (_isNew)
+        {
+            int id = (await _chargePointClient.AddAsync(Model)).Id;
+            Model.Id = id;
+        }
+        else
+        {
+            await _chargePointClient.UpdateAsync(Model);
+        }
+    }
+
+    private void OnAddCanceled()
+    {
+        OnChargePointRemoved.Invoke(this, Model);
+    }
+
+    private async Task OnDelete()
+    {
+        DialogParameters parameters = new DialogParameters();
+        parameters.Add("DialogMessage", $"Do you want to delete the charge point {Model.Name}?");
+
+        var dialog = Dialog.Show<ConfirmationDialog>("Please confirm", parameters: parameters);
+        var result = await dialog.Result;
+
+        if (!result.Cancelled)
+        {
+            await _chargePointClient.DeleteAsync(Model);
+            OnChargePointRemoved.Invoke(this, Model);
+        }
+    }
+}
