@@ -40,10 +40,6 @@ namespace OpenHomeEnergyManager.Infrastructure.Modules
                     var moduleServiceDefinition = moduleServiceDefinitions[module.ModuleServiceDefinitionKey];
                     _serviceRegistry.TryRegister(moduleServiceDefinition.Type, module);
                 }
-
-                //_serviceRegistry.TryRegister<SmaTriPowerService>(1, "192.168.2.184");
-                //_serviceRegistry.TryRegister<OpenWbService>(2, "192.168.2.175");
-                //_serviceRegistry.TryRegister<SmaHomeManagerService>(3);
             }
 
             foreach (IHostedModuleService service in _serviceRegistry.ModuleServices.Values.OfType<IHostedModuleService>())

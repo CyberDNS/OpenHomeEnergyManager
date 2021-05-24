@@ -11,10 +11,13 @@ using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using OpenHomeEnergyManager.Domain.Model.ChargePointAggregate;
 using OpenHomeEnergyManager.Domain.Model.ModuleAggregate;
-using OpenHomeEnergyManager.Domain.Services.ChargePoint;
+using OpenHomeEnergyManager.Domain.Services.ChargeModesServices;
+using OpenHomeEnergyManager.Domain.Services.ChargePointServices;
+using OpenHomeEnergyManager.Infrastructure.ChargeModes;
 using OpenHomeEnergyManager.Infrastructure.EntityFramework;
 using OpenHomeEnergyManager.Infrastructure.EntityFramework.Repositories;
 using OpenHomeEnergyManager.Infrastructure.Modules.DependencyInjection;
+using OpenHomeEnergyManager.Infrastructure.Modules.HomeAssistant;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -52,6 +55,10 @@ namespace OpenHomeEnergyManager.Api
             services.AddAutoMapper(typeof(Startup));
 
             services.AddModuleServices();
+            services.AddHostedService<ChargeModesHostedService>();
+            services.AddSingleton<IChargeModesService, ChargeModesService>();
+
+            services.AddHttpClient<HomeAssistantHttpClient>();
         }
 
 

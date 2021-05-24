@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using OpenHomeEnergyManager.Api.Controllers.V1.Dtos;
 using OpenHomeEnergyManager.Domain.Model.ChargePointAggregate;
-using OpenHomeEnergyManager.Domain.Services.ChargePoint;
+using OpenHomeEnergyManager.Domain.Services.ChargePointServices;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -81,6 +81,16 @@ namespace OpenHomeEnergyManager.Api.Controllers.V1
         {
             ChargePoint chargePoint = await _chargePointRepository.FindByIdAsync(id);
             _chargePointService.SetCurrent(chargePoint.ModuleId, current);
+
+            return NoContent();
+        }
+
+        [HttpPut("{id}/Actions/SetChargeMode")]
+        public async Task<IActionResult> SetChargeMode(int id, [FromBody] string chargeMode)
+        {
+            ChargePoint chargePoint = await _chargePointRepository.FindByIdAsync(id);
+            chargePoint.CurrentChargeMode = chargeMode;
+            await _chargePointRepository.UnitOfWork.SaveEntitiesAsync();
 
             return NoContent();
         }

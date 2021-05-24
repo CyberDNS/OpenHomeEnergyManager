@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace OpenHomeEnergyManager.Domain.Services.ChargePoint
+namespace OpenHomeEnergyManager.Domain.Services.ChargePointServices
 {
     public class ChargePointDataset
     {
