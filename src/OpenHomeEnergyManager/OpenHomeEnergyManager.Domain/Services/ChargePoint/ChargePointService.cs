@@ -23,20 +23,23 @@ namespace OpenHomeEnergyManager.Domain.Services.ChargePoint
 
             return new ChargePointDataset()
             {
-                ConfiguredCurrent = GetCapability<CurrentCapability>(moduleService, "CURRENT_CONFIGURED").Current,
-                Power = GetCapability<PowerCapability>(moduleService, "POWER").Power
+                Power = moduleService.GetCapability<PowerCapability>("POWER").Value,
+                CurrentPhase1 = moduleService.GetCapability<CurrentCapability>("CURRENT_PHASE_1").Value,
+                CurrentPhase2 = moduleService.GetCapability<CurrentCapability>("CURRENT_PHASE_2").Value,
+                CurrentPhase3 = moduleService.GetCapability<CurrentCapability>("CURRENT_PHASE_3").Value,
+                VoltagePhase1 = moduleService.GetCapability<VoltageCapability>("VOLTAGE_PHASE_1").Value,
+                VoltagePhase2 = moduleService.GetCapability<VoltageCapability>("VOLTAGE_PHASE_2").Value,
+                VoltagePhase3 = moduleService.GetCapability<VoltageCapability>("VOLTAGE_PHASE_3").Value,
+                IsPlugged = moduleService.GetCapability<IsPluggedCapability>("IS_PLUGGED").Value,
+                IsCharging = moduleService.GetCapability<IsChargingCapability>("IS_CHARGING").Value,
+                PhaseCount = moduleService.GetCapability<PhaseCountCapability>("PHASE_COUNT").Value,
             };
         }
 
-        private static T GetCapability<T>(IModuleService moduleService, string key)
-            where T: Capability
+        public void SetCurrent(int moduleId, int current)
         {
-            var capability =  moduleService.Capabilities
-                             .OfType<T>()
-                             .Where(c => c.Key.Equals(key, StringComparison.OrdinalIgnoreCase))
-                             .SingleOrDefault();
-
-            return capability;
+            var moduleService = _moduleServiceRegistry.FindById(moduleId);
+            moduleService.GetCapability<SetCurrentCapability>("SET_CURRENT").SetCurrent(current);
         }
     }
 }

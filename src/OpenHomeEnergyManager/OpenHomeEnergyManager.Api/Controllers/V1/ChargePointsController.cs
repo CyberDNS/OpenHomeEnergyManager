@@ -5,6 +5,7 @@ using OpenHomeEnergyManager.Domain.Model.ChargePointAggregate;
 using OpenHomeEnergyManager.Domain.Services.ChargePoint;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -73,6 +74,15 @@ namespace OpenHomeEnergyManager.Api.Controllers.V1
             var current = _chargePointService.GetCurrentData(chargePoint.ModuleId);
 
             return Ok(current);
+        }
+
+        [HttpPut("{id}/Actions/SetCurrent")]
+        public async Task<IActionResult> SetCurrent(int id, [FromBody, Range(0, 32)] int current)
+        {
+            ChargePoint chargePoint = await _chargePointRepository.FindByIdAsync(id);
+            _chargePointService.SetCurrent(chargePoint.ModuleId, current);
+
+            return NoContent();
         }
 
     }

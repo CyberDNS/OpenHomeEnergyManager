@@ -58,5 +58,12 @@ namespace OpenHomeEnergyManager.Blazor.Infrastructure.HttpClients
             var stringContent = await response.Content.ReadAsStringAsync();
             return JsonConvert.DeserializeObject<ChargePointDatasetDto>(stringContent);
         }
+
+        public async Task SetCurrentAsync(int id, int current, CancellationToken cancellationToken = default)
+        {
+            var response = await _httpClient.PutAsync($"{id}/Actions/SetCurrent", new StringContent(JsonConvert.SerializeObject(current), Encoding.UTF8, "application/json"), cancellationToken);
+            response.EnsureSuccessStatusCode();
+        }
+
     }
 }

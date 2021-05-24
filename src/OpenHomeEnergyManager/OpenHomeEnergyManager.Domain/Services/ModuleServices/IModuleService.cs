@@ -10,6 +10,9 @@ namespace OpenHomeEnergyManager.Domain.Services.ModuleServices
     {
         public IEnumerable<Capability> Capabilities { get; }
 
+        public T GetCapability<T>(string key) where T : Capability;
+
         public void Configure(IDictionary<string, string> settings);
+
     }
 }

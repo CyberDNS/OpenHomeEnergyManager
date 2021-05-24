@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 
 namespace OpenHomeEnergyManager.Infrastructure.Modules.SmaTriPower
 {
-    public class SmaTriPowerService : IPowerProvider, IHostedModuleService, IDisposable
+    public class SmaTriPowerService : ModuleServiceBase, IHostedModuleService, IDisposable
     {
         private string _ip;
 
@@ -24,14 +24,12 @@ namespace OpenHomeEnergyManager.Infrastructure.Modules.SmaTriPower
 
         public int CurrentPowerProvided { get; private set; }
 
-        public IEnumerable<Capability> Capabilities => throw new NotImplementedException();
-
         public SmaTriPowerService(ILogger<SmaTriPowerService> logger)
         {
             _logger = logger;
         }
 
-        public void Configure(IDictionary<string, string> settings)
+        public override void Configure(IDictionary<string, string> settings)
         {
             _ip = settings["IP Address"];
         }

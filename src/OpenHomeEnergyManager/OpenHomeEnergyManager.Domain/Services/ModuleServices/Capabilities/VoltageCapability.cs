@@ -6,12 +6,12 @@ using System.Threading.Tasks;
 
 namespace OpenHomeEnergyManager.Domain.Services.ModuleServices.Capabilities
 {
-    public class PowerCapability : Capability
+    public class VoltageCapability : Capability
     {
-        public PowerCapability(string key, string name) : base(key, name)
+        public VoltageCapability(string key, string name) : base(key, name)
         {
         }
 
-        public int Value { get; set; }
+        public decimal Value { get; set; }
     }
 }

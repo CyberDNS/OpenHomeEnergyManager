@@ -12,6 +12,6 @@ namespace OpenHomeEnergyManager.Domain.Services.ModuleServices.Capabilities
         {
         }
 
-        public int Current { get; set; }
+        public decimal Value { get; set; }
     }
 }

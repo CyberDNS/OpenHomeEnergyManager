@@ -1,4 +1,5 @@
 ﻿using OpenHomeEnergyManager.Domain.Model.ModuleServiceDefinitionAggregate;
+using OpenHomeEnergyManager.Infrastructure.Modules.HomeAssistant;
 using OpenHomeEnergyManager.Infrastructure.Modules.OpenWb;
 using OpenHomeEnergyManager.Infrastructure.Modules.SmaHomeManager;
 using OpenHomeEnergyManager.Infrastructure.Modules.SmaTriPower;
@@ -21,7 +22,8 @@ namespace OpenHomeEnergyManager.Infrastructure.Modules
             {
                 new SmaHomeManagerServiceDefinition(),
                 new SmaTriPowerServiceDefinition(),
-                new OpenWbServiceDefinition()
+                new OpenWbServiceDefinition(),
+                new HomeAssistantServiceDefinition()
             };
         }
 

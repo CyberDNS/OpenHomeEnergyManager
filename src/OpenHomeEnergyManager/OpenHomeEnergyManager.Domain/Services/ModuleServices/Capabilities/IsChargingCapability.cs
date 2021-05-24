@@ -6,12 +6,12 @@ using System.Threading.Tasks;
 
 namespace OpenHomeEnergyManager.Domain.Services.ModuleServices.Capabilities
 {
-    public class PowerCapability : Capability
+    public class IsChargingCapability : Capability
     {
-        public PowerCapability(string key, string name) : base(key, name)
+        public IsChargingCapability(string key, string name) : base(key, name)
         {
         }
 
-        public int Value { get; set; }
+        public bool Value { get; set; }
     }
 }

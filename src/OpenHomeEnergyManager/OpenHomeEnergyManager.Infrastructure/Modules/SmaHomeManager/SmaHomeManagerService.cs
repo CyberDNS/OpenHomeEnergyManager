@@ -15,7 +15,7 @@ using System.Threading.Tasks;
 
 namespace OpenHomeEnergyManager.Infrastructure.Modules.SmaHomeManager
 {
-    class SmaHomeManagerService : IPowerProvider, IPowerCollector, IHostedModuleService, IDisposable
+    class SmaHomeManagerService : ModuleServiceBase, IHostedModuleService, IDisposable
     {
         private string _serial;
 
@@ -27,14 +27,12 @@ namespace OpenHomeEnergyManager.Infrastructure.Modules.SmaHomeManager
 
         public int CurrentPowerCollected { get; private set; }
 
-        public IEnumerable<Capability> Capabilities => throw new NotImplementedException();
-
         public SmaHomeManagerService(ILogger<SmaHomeManagerService> logger)
         {
             _logger = logger;
         }
 
-        public void Configure(IDictionary<string, string> settings)
+        public override void Configure(IDictionary<string, string> settings)
         {
             _serial = settings["Serial Number"];
         }
