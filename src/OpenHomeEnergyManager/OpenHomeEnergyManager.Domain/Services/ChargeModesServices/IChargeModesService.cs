@@ -1,9 +1,10 @@
-﻿using System.Threading.Tasks;
+﻿using OpenHomeEnergyManager.Domain.Model.ChargePointAggregate;
+using System.Threading.Tasks;
 
 namespace OpenHomeEnergyManager.Domain.Services.ChargeModesServices
 {
     public interface IChargeModesService
     {
-        Task LoopAsync();
+        Task LoopAsync(ChargePoint chargePoint);
     }
 }

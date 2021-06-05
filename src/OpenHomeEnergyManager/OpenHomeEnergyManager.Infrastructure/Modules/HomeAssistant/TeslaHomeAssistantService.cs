@@ -20,13 +20,18 @@ using System.Threading.Tasks;
 
 namespace OpenHomeEnergyManager.Infrastructure.Modules.HomeAssistant
 {
-    public class HomeAssistantService : ModuleServiceBase, IHostedModuleService, IDisposable
+    public class TeslaHomeAssistantService : ModuleServiceBase, IHostedModuleService, IDisposable
     {
         private Timer _timer;
         private readonly ILogger _logger;
         private readonly HomeAssistantHttpClient _homeAssistantHttpClient;
 
-        public HomeAssistantService(ILogger<HomeAssistantService> logger, HomeAssistantHttpClient homeAssistantHttpClient)
+        private string _socEntity;
+        private string _chargerSwitchEntity;
+        private string _chargerIsChargingEntity;
+
+
+        public TeslaHomeAssistantService(ILogger<TeslaHomeAssistantService> logger, HomeAssistantHttpClient homeAssistantHttpClient)
         {
             _logger = logger;
             _homeAssistantHttpClient = homeAssistantHttpClient;
@@ -39,6 +44,16 @@ namespace OpenHomeEnergyManager.Infrastructure.Modules.HomeAssistant
         {
             _homeAssistantHttpClient._httpClient.BaseAddress = new Uri(settings["Home Assistant URL"]);
             _homeAssistantHttpClient._httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", settings["Long Lived Token"]);
+
+            _socEntity = GetSetting(settings, "State of Charge Entity");
+            _chargerSwitchEntity = GetSetting(settings, "Charger Switch Entity");
+            _chargerIsChargingEntity = GetSetting(settings, "Charger Sensor Entity");
+        }
+
+        private string GetSetting(IDictionary<string, string> settings, string key)
+        {
+            if (settings.ContainsKey(key)) { return settings[key]; }
+            return null;
         }
 
         public Task StartAsync(CancellationToken cancellationToken)
@@ -50,16 +65,25 @@ namespace OpenHomeEnergyManager.Infrastructure.Modules.HomeAssistant
 
         private async void DoWork(object state)
         {
-            string soc = await _homeAssistantHttpClient.GetState("sensor.tessilo_battery_sensor");
-            GetCapability<StateOfChargeCapability>("SOC").Value = Convert.ToDecimal(soc, CultureInfo.InvariantCulture.NumberFormat);
+            if (!string.IsNullOrWhiteSpace(_socEntity))
+            {
+                string soc = (await _homeAssistantHttpClient.GetState(_socEntity)).state;
+                GetCapability<StateOfChargeCapability>("SOC").Value = Convert.ToDecimal(soc, CultureInfo.InvariantCulture.NumberFormat);
+            }
 
-            string isCharging = await _homeAssistantHttpClient.GetState("switch.tessilo_charger_switch");
-            GetCapability<IsChargingCapability>("IS_CHARGING").Value = isCharging.Equals("on", StringComparison.OrdinalIgnoreCase);
+            if (!string.IsNullOrWhiteSpace(_chargerIsChargingEntity))
+            {
+                string isNotCharging = (await _homeAssistantHttpClient.GetState(_chargerIsChargingEntity)).attributes.charging_state;
+                GetCapability<IsChargingCapability>("IS_CHARGING").Value = !isNotCharging.Equals("Stopped", StringComparison.OrdinalIgnoreCase);
+            }
         }
 
         private void SetIsCharging(bool turnOn)
         {
-            _homeAssistantHttpClient.CallService($"switch/turn_{(turnOn ? "on" : "off")}", "switch.tessilo_charger_switch").GetAwaiter();
+            if (!string.IsNullOrWhiteSpace(_chargerSwitchEntity))
+            {
+                _homeAssistantHttpClient.CallService($"switch/turn_{(turnOn ? "on" : "off")}", _chargerSwitchEntity).GetAwaiter();
+            }
         }
 
         public Task StopAsync(CancellationToken cancellationToken)

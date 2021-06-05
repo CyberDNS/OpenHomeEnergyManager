@@ -47,18 +47,5 @@ namespace OpenHomeEnergyManager.Domain.Services.ChargePointServices
             var moduleService = _moduleServiceRegistry.FindById(moduleId);
             moduleService.GetCapability<SetPhaseCountCapability>("SET_PHASE_COUNT").Set(phases);
         }
-
-        public void SetIsCharging(bool turnOn)
-        {
-            var hassModuleService = _moduleServiceRegistry.FindById(10);
-            hassModuleService.GetCapability<SetIsChargingCapability>("SET_IS_CHARGING").Set(turnOn);
-        }
-
-        public bool GetIsCharging()
-        {
-            var hassModuleService = _moduleServiceRegistry.FindById(10);
-            return hassModuleService.GetCapability<IsChargingCapability>("IS_CHARGING").Value;
-        }
-
     }
 }

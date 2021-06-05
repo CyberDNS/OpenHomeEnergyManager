@@ -67,11 +67,13 @@ namespace OpenHomeEnergyManager.Api.Controllers.V1
         }
 
 
-        [HttpGet("{id}/Data/Current")]
-        public async Task<IActionResult> GetCurrentData(int id)
+        [HttpGet("{id}/Data/Now")]
+        public async Task<IActionResult> GetNowData(int id)
         {
             ChargePoint chargePoint = await _chargePointRepository.FindByIdAsync(id);
-            var current = _chargePointService.GetCurrentData(chargePoint.ModuleId);
+
+            if (!chargePoint.ModuleId.HasValue) { return NotFound(); }
+            var current = _chargePointService.GetCurrentData(chargePoint.ModuleId.Value);
 
             return Ok(current);
         }
@@ -80,7 +82,9 @@ namespace OpenHomeEnergyManager.Api.Controllers.V1
         public async Task<IActionResult> SetCurrent(int id, [FromBody, Range(0, 32)] int current)
         {
             ChargePoint chargePoint = await _chargePointRepository.FindByIdAsync(id);
-            _chargePointService.SetCurrent(chargePoint.ModuleId, current);
+
+            if (!chargePoint.ModuleId.HasValue) { return NotFound(); }
+            _chargePointService.SetCurrent(chargePoint.ModuleId.Value, current);
 
             return NoContent();
         }

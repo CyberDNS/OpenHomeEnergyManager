@@ -1,4 +1,6 @@
-﻿using Microsoft.Extensions.Hosting;
+﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using OpenHomeEnergyManager.Domain.Model.ChargePointAggregate;
 using OpenHomeEnergyManager.Domain.Services.ChargeModesServices;
 using System;
 using System.Collections.Generic;
@@ -11,31 +13,44 @@ namespace OpenHomeEnergyManager.Infrastructure.ChargeModes
 {
     public class ChargeModesHostedService : IHostedService
     {
-        private readonly IChargeModesService _chargeModesService;
+        private readonly IServiceScopeFactory _serviceScopeFactory;
         private CancellationTokenSource _cancellationTokenSource;
 
 
-        public ChargeModesHostedService(IChargeModesService chargeModesService)
+        public ChargeModesHostedService(IServiceScopeFactory serviceScopeFactory)
         {
-            _chargeModesService = chargeModesService;
+            _serviceScopeFactory = serviceScopeFactory;
         }
 
         public Task StartAsync(CancellationToken cancellationToken)
         {
             _cancellationTokenSource = new CancellationTokenSource();
 
-            DoWork(_cancellationTokenSource.Token);
+            using (var scope = _serviceScopeFactory.CreateScope())
+            {
+                IChargePointRepository chargePointRepository = scope.ServiceProvider.GetRequiredService<IChargePointRepository>();
+
+                foreach (var chargePoint in chargePointRepository.GetAll())
+                {
+                    Task.Run(() => DoWork(chargePoint, _cancellationTokenSource.Token));
+                }
+
+            }
             return Task.CompletedTask;
         }
 
-        private async void DoWork(CancellationToken cancellation)
+        private async void DoWork(ChargePoint chargePoint, CancellationToken cancellation)
         {
-            do
+            using (var scope = _serviceScopeFactory.CreateScope())
             {
-                await _chargeModesService.LoopAsync();
-                await Task.Delay(TimeSpan.FromSeconds(5));
+                var chargeModesService = scope.ServiceProvider.GetRequiredService<IChargeModesService>();
+                do
+                {
+                    await chargeModesService.LoopAsync(chargePoint);
+                    await Task.Delay(TimeSpan.FromSeconds(5));
 
-            } while (!cancellation.IsCancellationRequested);
+                } while (!cancellation.IsCancellationRequested);
+            }
         }
 
         public Task StopAsync(CancellationToken cancellationToken)

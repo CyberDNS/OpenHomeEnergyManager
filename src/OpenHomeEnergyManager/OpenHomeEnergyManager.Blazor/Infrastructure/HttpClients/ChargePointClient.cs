@@ -50,9 +50,9 @@ namespace OpenHomeEnergyManager.Blazor.Infrastructure.HttpClients
             response.EnsureSuccessStatusCode();
         }
 
-        public async Task<ChargePointDatasetDto> GetCurrentDataAsync(int id, CancellationToken cancellationToken = default)
+        public async Task<ChargePointDatasetDto> GetNowDataAsync(int id, CancellationToken cancellationToken = default)
         {
-            var response = await _httpClient.GetAsync($"{id}/Data/Current", cancellationToken);
+            var response = await _httpClient.GetAsync($"{id}/Data/Now", cancellationToken);
             response.EnsureSuccessStatusCode();
 
             var stringContent = await response.Content.ReadAsStringAsync();
@@ -62,6 +62,12 @@ namespace OpenHomeEnergyManager.Blazor.Infrastructure.HttpClients
         public async Task SetCurrentAsync(int id, int current, CancellationToken cancellationToken = default)
         {
             var response = await _httpClient.PutAsync($"{id}/Actions/SetCurrent", new StringContent(JsonConvert.SerializeObject(current), Encoding.UTF8, "application/json"), cancellationToken);
+            response.EnsureSuccessStatusCode();
+        }
+
+        public async Task SetChargeModeAsync(int id, string chargeMode, CancellationToken cancellationToken = default)
+        {
+            var response = await _httpClient.PutAsync($"{id}/Actions/SetChargeMode", new StringContent(JsonConvert.SerializeObject(chargeMode), Encoding.UTF8, "application/json"), cancellationToken);
             response.EnsureSuccessStatusCode();
         }
 

@@ -13,7 +13,9 @@ namespace OpenHomeEnergyManager.Domain.Model.ChargePointAggregate
 
         public string Image { get; private set; }
 
-        public int ModuleId { get; set; } 
+        public int? ModuleId { get; set; } 
+
+        public int? VehicleId { get; set; }
 
         public string CurrentChargeMode { get; set; }
     }

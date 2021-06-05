@@ -45,7 +45,7 @@ namespace OpenHomeEnergyManager.Infrastructure.Modules
             foreach (IHostedModuleService service in _serviceRegistry.ModuleServices.Values.OfType<IHostedModuleService>())
             {
                 await service.StartAsync(cancellationToken);
-            }    
+            }
         }
 
         public async Task StopAsync(CancellationToken cancellationToken)

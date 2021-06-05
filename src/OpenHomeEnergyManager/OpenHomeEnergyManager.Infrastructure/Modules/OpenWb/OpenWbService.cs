@@ -49,7 +49,7 @@ namespace OpenHomeEnergyManager.Infrastructure.Modules.OpenWb
             RegisterCapability(new StateOfChargeCapability("SOC", "State of Charge"));
 
             RegisterCapability(new SetCurrentCapability("SET_CURRENT", "Set Current", SetCurrent));
-            RegisterCapability(new SetPhaseCountCapability("SET_PHASE_COUNT", "Set Phase Count", null));
+            RegisterCapability(new SetPhaseCountCapability("SET_PHASE_COUNT", "Set Phase Count", SetPhaseCount));
         }
 
         public override void Configure(IDictionary<string, string> settings)
@@ -148,6 +148,7 @@ namespace OpenHomeEnergyManager.Infrastructure.Modules.OpenWb
         {
             if (_mqttClient.IsConnected)
             {
+                _logger.LogInformation("SetCurrent to {current}", current);
                 _mqttClient.PublishAsync("openWB/set/isss/Current", $"{current}").GetAwaiter().GetResult();
             }
         }
@@ -156,6 +157,7 @@ namespace OpenHomeEnergyManager.Infrastructure.Modules.OpenWb
         {
             if (_mqttClient.IsConnected)
             {
+                _logger.LogInformation("SetPhaseCount to {phases}", phases);
                 _mqttClient.PublishAsync("openWB/set/isss/U1p3p", $"{phases}").GetAwaiter().GetResult();
             }
         }

@@ -2,15 +2,17 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using OpenHomeEnergyManager.Infrastructure.EntityFramework;
 
 namespace OpenHomeEnergyManager.Infrastructure.EntityFramework.Migrations
 {
     [DbContext(typeof(OpenHomeEnergyManagerDbContext))]
-    partial class ChargePointManagementContextModelSnapshot : ModelSnapshot
+    [Migration("20210524134225_AddVehicle")]
+    partial class AddVehicle
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

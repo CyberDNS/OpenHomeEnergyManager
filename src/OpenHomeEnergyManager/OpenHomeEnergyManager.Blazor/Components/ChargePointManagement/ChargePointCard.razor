@@ -3,13 +3,16 @@
 	<MudCardMedia Image="@($"img/EV/{ChargePoint.Image}")" Height="200" />
 	<MudCardContent>
 		<MudText>@ChargePoint.Name</MudText>
-		<MudText>Power: @Power W</MudText>
-		<MudText>Current: @Current A</MudText>
+		<MudGrid>
+			<MudItem>
+				<MudText Typo="Typo.button">@Power W</MudText> / <MudText Typo="Typo.caption">@(PhaseCount)x</MudText> <MudText Typo="Typo.button">@Current A</MudText>
+			</MudItem>
+		</MudGrid>
 		<MudSlider @bind-Value="CurrentSet" Step="1" Min="6" Max="16" Color="Color.Info">Value: @CurrentSet.ToString()</MudSlider>
 	</MudCardContent>
 	<MudCardActions>
-		<MudButton Variant="Variant.Text" Color="Color.Primary">Direct Charge</MudButton>
-		<MudButton Variant="Variant.Text" Color="Color.Primary">More</MudButton>
+		<MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="@(() => _chargePointClient.SetChargeModeAsync(ChargePoint.Id, "DIRECT"))">Direct</MudButton>
+		<MudButton Variant="Variant.Text" Color="Color.Error" OnClick="@(() => _chargePointClient.SetChargeModeAsync(ChargePoint.Id, "STOP"))">Stop</MudButton>
 	</MudCardActions>
 </MudCard>
 
@@ -21,9 +24,9 @@
 
 	public int Power { get; set; }
 	public decimal Current { get; set; }
-    public int PhaseCount { get; set; }
+	public int PhaseCount { get; set; }
 
-	private int _currentSet;
+	private int _currentSet = 6;
 	public int CurrentSet
 	{
 		get { return _currentSet; }
@@ -49,7 +52,7 @@
 
 	public async Task UpdateData()
 	{
-		var currentData = await _chargePointClient.GetCurrentDataAsync(ChargePoint.Id);
+		var currentData = await _chargePointClient.GetNowDataAsync(ChargePoint.Id);
 		Power = currentData.Power;
 		Current = currentData.CurrentPhase1;
 		PhaseCount = currentData.PhaseCount;

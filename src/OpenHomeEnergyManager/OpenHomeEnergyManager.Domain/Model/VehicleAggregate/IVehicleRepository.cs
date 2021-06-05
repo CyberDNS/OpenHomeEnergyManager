@@ -18,4 +18,4 @@ namespace OpenHomeEnergyManager.Domain.Model.VehicleAggregate
         Task<Vehicle> FindByIdAsync(int id);
     }
 }
-}
+

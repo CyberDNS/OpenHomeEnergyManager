@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.EntityFrameworkCore.Storage;
 using OpenHomeEnergyManager.Domain.Model.ChargePointAggregate;
 using OpenHomeEnergyManager.Domain.Model.ModuleAggregate;
+using OpenHomeEnergyManager.Domain.Model.VehicleAggregate;
 using OpenHomeEnergyManager.Domain.SeedWork;
 using OpenHomeEnergyManager.Infrastructure.EntityFramework.Configurations;
 using System;
@@ -19,6 +20,7 @@ namespace OpenHomeEnergyManager.Infrastructure.EntityFramework
     {
         public DbSet<ChargePoint> ChargePoints { get; set; }
         public DbSet<Module> Modules { get; set; }
+        public DbSet<Vehicle> Vehicles { get; set; }
 
 
         private IDbContextTransaction _currentTransaction;
@@ -34,6 +36,7 @@ namespace OpenHomeEnergyManager.Infrastructure.EntityFramework
         {
             modelBuilder.ApplyConfiguration(new ChargePointConfiguration());
             modelBuilder.ApplyConfiguration(new ModuleConfiguration());
+            modelBuilder.ApplyConfiguration(new VehicleConfiguration());
         }
 
         public async Task<bool> SaveEntitiesAsync(CancellationToken cancellationToken = default(CancellationToken))

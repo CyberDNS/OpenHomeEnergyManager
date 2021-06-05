@@ -1,5 +1,7 @@
 ﻿using OpenHomeEnergyManager.Domain.Model.ChargePointAggregate;
+using OpenHomeEnergyManager.Domain.Model.VehicleAggregate;
 using OpenHomeEnergyManager.Domain.Services.ChargePointServices;
+using OpenHomeEnergyManager.Domain.Services.VehicleServices;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,6 +14,6 @@ namespace OpenHomeEnergyManager.Domain.Services.ChargeModesServices
     {
         public string UniqueIdentifier { get; }
 
-        public Task LoopAsync(ChargePoint chargePoint, ChargePointService chargePointService);
+        public Task LoopAsync(ChargePoint chargePoint, Vehicle vehicle);
     }
 }

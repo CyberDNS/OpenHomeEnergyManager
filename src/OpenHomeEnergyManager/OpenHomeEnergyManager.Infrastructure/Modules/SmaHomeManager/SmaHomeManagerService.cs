@@ -23,13 +23,13 @@ namespace OpenHomeEnergyManager.Infrastructure.Modules.SmaHomeManager
         private readonly ILogger _logger;
         private CancellationTokenSource _tokenSource;
 
-        public int CurrentPowerProvided { get; private set; }
-
-        public int CurrentPowerCollected { get; private set; }
-
         public SmaHomeManagerService(ILogger<SmaHomeManagerService> logger)
         {
             _logger = logger;
+
+            RegisterCapability(new PowerCapability("IMPORTED_POWER", "Imported Power"));
+            RegisterCapability(new PowerCapability("EXPORTED_POWER", "Exported Power"));
+
         }
 
         public override void Configure(IDictionary<string, string> settings)
@@ -42,7 +42,6 @@ namespace OpenHomeEnergyManager.Infrastructure.Modules.SmaHomeManager
             _tokenSource = new CancellationTokenSource();
 
             _client = new UdpClient(9522);
-
             _client.JoinMulticastGroup(IPAddress.Parse("239.12.255.254"));
 
             _logger.LogInformation("SMA Home Manager Module joined multicast group");
@@ -52,14 +51,14 @@ namespace OpenHomeEnergyManager.Infrastructure.Modules.SmaHomeManager
             return Task.CompletedTask;
         }
 
-        private void DoWork(CancellationToken cancellationToken)
+        private async void DoWork(CancellationToken cancellationToken)
         {
             while (!cancellationToken.IsCancellationRequested)
             {
                 try
                 {
-                    var ipEndPoint = new IPEndPoint(IPAddress.Any, 0);
-                    var data = _client.Receive(ref ipEndPoint);
+                    var dataResult = await _client.ReceiveAsync();
+                    var data = dataResult.Buffer;
 
                     if (data[0..3].SequenceEqual(Encoding.ASCII.GetBytes("SMA")))
                     {
@@ -87,8 +86,8 @@ namespace OpenHomeEnergyManager.Infrastructure.Modules.SmaHomeManager
                                         message += $"{currentValue}{Environment.NewLine}";
                                         pointer += 4;
 
-                                        if (header.Name.Equals("pconsume", StringComparison.OrdinalIgnoreCase)) { CurrentPowerProvided = (int)currentValue / 10; }
-                                        if (header.Name.Equals("psupply", StringComparison.OrdinalIgnoreCase)) { CurrentPowerCollected = (int)currentValue / 10; }
+                                        if (header.Name.Equals("pconsume", StringComparison.OrdinalIgnoreCase)) { GetCapability<PowerCapability>("IMPORTED_POWER").Value = (int)currentValue / 10; }
+                                        if (header.Name.Equals("psupply", StringComparison.OrdinalIgnoreCase)) { GetCapability<PowerCapability>("EXPORTED_POWER").Value = (int)currentValue / 10; }
                                         break;
                                     case DataDecoder.DataType.Counter:
                                         ulong counterValue = BitConverter.ToUInt64(data[pointer..(pointer + 8)].Reverse().ToArray());
@@ -104,7 +103,7 @@ namespace OpenHomeEnergyManager.Infrastructure.Modules.SmaHomeManager
                                 }
                             }
 
-                            _logger.LogDebug(message);
+                            _logger.LogDebug("SmaHomeManager reports Import: {Import} Export: {Export}", GetCapability<PowerCapability>("IMPORTED_POWER").Value, GetCapability<PowerCapability>("EXPORTED_POWER").Value);
                         }
                     }
                 }

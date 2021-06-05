@@ -66,6 +66,12 @@ else
         {
             _moduleServiceDefinitions = await _moduleServiceDefinitionClient.GetAllAsync();
             Model.ModuleServiceDefinition = _moduleServiceDefinitions.Where(d => d.Key.Equals(Model.ModuleServiceDefinitionKey)).SingleOrDefault();
+
+            foreach(var setting in Model.ModuleServiceDefinition.Settings)
+            {
+                if (!Model.Settings.ContainsKey(setting.Key)) { Model.Settings.Add(setting.Key, ""); }
+            }
+
             StateHasChanged();
         }
     }

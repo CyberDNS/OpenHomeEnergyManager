@@ -14,9 +14,8 @@ namespace OpenHomeEnergyManager.Api.Controllers.V1.Dtos
         public string Image { get; set; }
 
         public int ModuleId { get; set; }
+        public int VehicleId { get; set; }
 
-        public int Power { get; }
-
-        public int Current { get; }
+        public string CurrentChargeMode { get; set; }
     }
 }

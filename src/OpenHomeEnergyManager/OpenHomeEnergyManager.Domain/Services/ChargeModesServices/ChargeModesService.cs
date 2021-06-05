@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using OpenHomeEnergyManager.Domain.Model.ChargePointAggregate;
+using OpenHomeEnergyManager.Domain.Model.VehicleAggregate;
 using OpenHomeEnergyManager.Domain.Services.ChargePointServices;
 using System;
 using System.Collections.Generic;
@@ -12,36 +13,44 @@ namespace OpenHomeEnergyManager.Domain.Services.ChargeModesServices
 {
     public class ChargeModesService : IChargeModesService
     {
-        private readonly Dictionary<string, IChargeMode> _chargeModes = new Dictionary<string, IChargeMode>()
-        {
-            { "STOP", new StopChargeMode() },
-            { "DIRECT", new DirectChargeMode() },
-        };
         private readonly IServiceScopeFactory _serviceScopeFactory;
+        private readonly IServiceProvider _serviceProvider;
+        private readonly IVehicleRepository _vehicleRepository;
+        private readonly ChargePointService _chargePointService;
 
-        public ChargeModesService(IServiceScopeFactory serviceScopeFactory)
+        public ChargeModesService(IServiceProvider serviceProvider, IVehicleRepository vehicleRepository, ChargePointService chargePointService)
         {
-
-            _serviceScopeFactory = serviceScopeFactory;
+            _serviceProvider = serviceProvider;
+            _vehicleRepository = vehicleRepository;
+            _chargePointService = chargePointService;
         }
 
 
-        public async Task LoopAsync()
+        public async Task LoopAsync(ChargePoint chargePoint)
         {
-            using (var scope = _serviceScopeFactory.CreateScope())
+            var chargeMode = GetCharge(chargePoint.CurrentChargeMode);
+            if ((chargeMode is not null) &&
+                (chargePoint.ModuleId.HasValue) &&
+                (chargePoint.VehicleId.HasValue) &&
+                _chargePointService.GetCurrentData(chargePoint.ModuleId.Value).IsPlugged)
             {
-                IChargePointRepository chargePointRepository = scope.ServiceProvider.GetRequiredService<IChargePointRepository>();
-                ChargePointService chargePointService = scope.ServiceProvider.GetRequiredService<ChargePointService>();
+                var vehicle = await _vehicleRepository.FindByIdAsync(chargePoint.VehicleId.Value);
+                await chargeMode.LoopAsync(chargePoint, vehicle);
+            }
+        }
 
-                var chargePoints = chargePointRepository.GetAll();
-
-                foreach (var chargePoint in chargePoints)
-                {
-                    if ((chargePoint.CurrentChargeMode is not null) && (_chargeModes.ContainsKey(chargePoint.CurrentChargeMode)))
-                    {
-                        await _chargeModes[chargePoint.CurrentChargeMode].LoopAsync(chargePoint, chargePointService);
-                    }
-                }
+        private IChargeMode GetCharge(string uniqueIdentifier)
+        {
+            switch (uniqueIdentifier)
+            {
+                case "STOP":
+                    return _serviceProvider.GetRequiredService<StopChargeMode>();
+                case "DIRECT":
+                    return _serviceProvider.GetRequiredService<DirectChargeMode>();
+                case "EXCESS":
+                    return _serviceProvider.GetRequiredService<ExcessChargeMode>();
+                default:
+                    return null;
             }
         }
     }

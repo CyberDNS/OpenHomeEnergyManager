@@ -1,13 +1,11 @@
-﻿using OpenHomeEnergyManager.Domain.SeedWork;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
-namespace OpenHomeEnergyManager.Domain.Model.VehicleAggregate
+namespace OpenHomeEnergyManager.Api.Controllers.V1.Dtos
 {
-    public class Vehicle : Entity, IAggregateRoot
+    public class VehicleDto
     {
         public string Name { get; private set; }
 

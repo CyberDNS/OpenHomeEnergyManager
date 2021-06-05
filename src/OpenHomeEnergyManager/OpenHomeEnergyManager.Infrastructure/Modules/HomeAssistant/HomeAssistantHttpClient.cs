@@ -18,13 +18,13 @@ namespace OpenHomeEnergyManager.Infrastructure.Modules.HomeAssistant
             _httpClient = httpClient;
         }
 
-        public async Task<string> GetState(string entityId, CancellationToken cancellationToken = default)
+        public async Task<dynamic> GetState(string entityId, CancellationToken cancellationToken = default)
         {
             var response = await _httpClient.GetAsync($"api/states/{entityId}", cancellationToken);
             response.EnsureSuccessStatusCode();
 
             var stringContent = await response.Content.ReadAsStringAsync();
-            return JsonConvert.DeserializeObject<dynamic>(stringContent).state;
+            return JsonConvert.DeserializeObject<dynamic>(stringContent);
         }
 
         public async Task CallService(string service, string entityId, CancellationToken cancellationToken = default)

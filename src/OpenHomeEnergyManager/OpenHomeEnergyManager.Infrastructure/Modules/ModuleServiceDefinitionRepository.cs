@@ -23,7 +23,7 @@ namespace OpenHomeEnergyManager.Infrastructure.Modules
                 new SmaHomeManagerServiceDefinition(),
                 new SmaTriPowerServiceDefinition(),
                 new OpenWbServiceDefinition(),
-                new HomeAssistantServiceDefinition()
+                new TeslaHomeAssistantServiceDefinition()
             };
         }
 
