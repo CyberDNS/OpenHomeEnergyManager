@@ -1,6 +1,4 @@
-﻿using InfluxDB.Client;
-using InfluxDB.Client.Api.Domain;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using MQTTnet;
 using MQTTnet.Client;
 using MQTTnet.Client.Disconnecting;
@@ -67,14 +65,34 @@ namespace OpenHomeEnergyManager.Infrastructure.Modules.HomeAssistant
         {
             if (!string.IsNullOrWhiteSpace(_socEntity))
             {
-                string soc = (await _homeAssistantHttpClient.GetState(_socEntity)).state;
-                GetCapability<StateOfChargeCapability>("SOC").Value = Convert.ToDecimal(soc, CultureInfo.InvariantCulture.NumberFormat);
+                string soc = (await _homeAssistantHttpClient.GetState(_socEntity))?.state;
+                if (!string.IsNullOrWhiteSpace(soc))
+                {
+                    try
+                    {
+                        GetCapability<StateOfChargeCapability>("SOC").Value = Convert.ToDecimal(soc, CultureInfo.InvariantCulture.NumberFormat);
+                    }
+                    catch (FormatException)
+                    {
+                        _logger.LogWarning("Converting SOC failed {SocString}", soc);
+                    }
+                }
             }
 
             if (!string.IsNullOrWhiteSpace(_chargerIsChargingEntity))
             {
-                string isNotCharging = (await _homeAssistantHttpClient.GetState(_chargerIsChargingEntity)).attributes.charging_state;
-                GetCapability<IsChargingCapability>("IS_CHARGING").Value = !isNotCharging.Equals("Stopped", StringComparison.OrdinalIgnoreCase);
+                string chargingState = (await _homeAssistantHttpClient.GetState(_chargerIsChargingEntity))?.attributes?.charging_state;
+                if (!string.IsNullOrWhiteSpace(chargingState))
+                {
+                    try
+                    {
+                        GetCapability<IsChargingCapability>("IS_CHARGING").Value = chargingState.Equals("Charging", StringComparison.OrdinalIgnoreCase);
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogError(ex, "Something went wrong on determining charging state {chargingState}", chargingState);
+                    }
+                }
             }
         }
 

@@ -1,6 +1,4 @@
-﻿using InfluxDB.Client;
-using InfluxDB.Client.Api.Domain;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using OpenHomeEnergyManager.Domain.Model.ModuleAggregate;
 using OpenHomeEnergyManager.Domain.Services.ModuleServices.Capabilities;
 using System;
@@ -67,7 +65,7 @@ namespace OpenHomeEnergyManager.Infrastructure.Modules.SmaHomeManager
 
                         if (serial.ToString().Equals(_serial))
                         {
-                            _logger.LogDebug($"DataLength: {dataLength} Serial: {serial}");
+                            _logger.LogTrace($"DataLength: {dataLength} Serial: {serial}");
 
                             string message = "";
 
@@ -103,7 +101,7 @@ namespace OpenHomeEnergyManager.Infrastructure.Modules.SmaHomeManager
                                 }
                             }
 
-                            _logger.LogDebug("SmaHomeManager reports Import: {Import} Export: {Export}", GetCapability<PowerCapability>("IMPORTED_POWER").Value, GetCapability<PowerCapability>("EXPORTED_POWER").Value);
+                            _logger.LogTrace("SmaHomeManager reports Import: {Import} Export: {Export}", GetCapability<PowerCapability>("IMPORTED_POWER").Value, GetCapability<PowerCapability>("EXPORTED_POWER").Value);
                         }
                     }
                 }

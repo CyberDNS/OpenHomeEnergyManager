@@ -1,6 +1,4 @@
 ﻿using FluentModbus;
-using InfluxDB.Client;
-using InfluxDB.Client.Api.Domain;
 using Microsoft.Extensions.Logging;
 using OpenHomeEnergyManager.Domain.Model.ModuleAggregate;
 using OpenHomeEnergyManager.Domain.Services.ModuleServices.Capabilities;

@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using OpenHomeEnergyManager.Api.Controllers.V1.Dtos;
+using OpenHomeEnergyManager.Api.Controllers.V1.Dtos.Commands;
 using OpenHomeEnergyManager.Domain.Model.VehicleAggregate;
 using OpenHomeEnergyManager.Domain.Services.VehicleServices;
 using System;
@@ -32,6 +33,16 @@ namespace OpenHomeEnergyManager.Api.Controllers.V1
             var result = _vehicleRepository.GetAll().Select(c => _mapper.Map<VehicleDto>(c)).ToArray();
 
             return Ok(result);
+        }
+
+        [HttpPut("ChangeModule/")]
+        public async Task<IActionResult> ChangeModule(ChangeModuleDto dto)
+        {
+            var vehicle = await _vehicleRepository.FindByIdAsync(dto.Id);
+            vehicle.ModuleId = dto.ModuleId;
+            await _vehicleRepository.UnitOfWork.SaveEntitiesAsync();
+
+            return NoContent();
         }
     }
 }

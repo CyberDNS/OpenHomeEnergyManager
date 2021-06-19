@@ -31,9 +31,9 @@ namespace OpenHomeEnergyManager.Blazor
 
             services.AddMudServices();
 
-            services.AddHttpClient<ChargePointClient>(o => o.BaseAddress = new Uri("http://localhost:5001/api/ChargePoints/"));
-            services.AddHttpClient<ModuleServiceDefinitionClient>(o => o.BaseAddress = new Uri("http://localhost:5001/api/ModuleServiceDefinitions/"));
-            services.AddHttpClient<ModuleClient>(o => o.BaseAddress = new Uri("http://localhost:5001/api/Modules/"));
+            services.AddHttpClient<ChargePointClient>(o => o.BaseAddress = new Uri($"{Configuration.GetValue<string>("HttpClients:Uris:OpenHomeEnergyManagerApi")}ChargePoints/"));
+            services.AddHttpClient<ModuleServiceDefinitionClient>(o => o.BaseAddress = new Uri($"{Configuration.GetValue<string>("HttpClients:Uris:OpenHomeEnergyManagerApi")}ModuleServiceDefinitions/"));
+            services.AddHttpClient<ModuleClient>(o => o.BaseAddress = new Uri($"{Configuration.GetValue<string>("HttpClients:Uris:OpenHomeEnergyManagerApi")}Modules/"));
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

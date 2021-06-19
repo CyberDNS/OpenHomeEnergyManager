@@ -1,4 +1,5 @@
-﻿using OpenHomeEnergyManager.Domain.Model.ChargePointAggregate;
+﻿using Microsoft.Extensions.Logging;
+using OpenHomeEnergyManager.Domain.Model.ChargePointAggregate;
 using OpenHomeEnergyManager.Domain.Model.VehicleAggregate;
 using OpenHomeEnergyManager.Domain.Services.ChargePointServices;
 using OpenHomeEnergyManager.Domain.Services.VehicleServices;
@@ -11,47 +12,44 @@ using System.Threading.Tasks;
 
 namespace OpenHomeEnergyManager.Domain.Services.ChargeModesServices
 {
-    public class DirectChargeMode : IChargeMode
+    public class DirectChargeMode : ChargeModeBase, IChargeMode
     {
-        private readonly ChargePointService _chargePointService;
-        private readonly VehicleService _vehicleService;
 
         public string UniqueIdentifier => "DIRECT";
 
-        public DirectChargeMode(ChargePointService chargePointService, VehicleService vehicleService)
+        public DirectChargeMode(ILogger<ChargeModeBase> logger, ChargePointService chargePointService, VehicleService vehicleService)
+            : base(logger, chargePointService, vehicleService)
         {
-            _chargePointService = chargePointService;
-            _vehicleService = vehicleService;
         }
 
         public async Task LoopAsync(ChargePoint chargePoint, Vehicle vehicle)
         {
-            var isCharging = _chargePointService.GetCurrentData(chargePoint.ModuleId.Value).IsCharging;
+            ChargePointDataset chargePointData = _chargePointService.GetCurrentData(chargePoint.ModuleId.Value);
+            VehicleDataset vehicleData = _vehicleService.GetCurrentData(vehicle.ModuleId);
 
-            //if ((isNotCharging) && (minutesAfterLastStop > 5))
-            //{
-            //    _logger.LogInformation("Starting charge / Minutes after last stop: {minutesAfterLastStop}", minutesAfterLastStop);
-            //    await StartCharging(chargePoint, vehicle);
-            //    _logger.LogInformation("Started!");
-            //}
+            bool isCharging = GetIsCharging(chargePoint, vehicle);
+            bool isNotCharging = GetIsNotCharging(chargePoint, vehicle);
+
+            if (isCharging == isNotCharging) { _logger.LogWarning("Inconsistent charging state"); }
+
+            bool chargePointIsCharging = _chargePointService.GetCurrentData(chargePoint.ModuleId.Value).IsCharging;
+
+            if (!chargePointIsCharging)
+            {
+                _logger.LogInformation("Starting charge...");
+                await StartCharging(chargePoint, vehicle, phases: 3);
+                _logger.LogInformation("Started!");
+            }
+
+            if (chargePointData.PhaseCount != 3)
+            {
+                await SetPhases(chargePoint, vehicle, phases: 3);
+            }
+
+            if (Math.Round(chargePointData.CurrentPhase1, 0) < 16)
+            {
+                SetCurrent(chargePoint, current: 16);
+            }
         }
-
-        //private async Task StartCharging(ChargePoint chargePoint, Vehicle vehicle)
-        //{
-        //    _chargePointService.SetCurrent(chargePoint.ModuleId.Value, 6);
-        //    //_chargePointService.SetPhaseCount(chargePoint.ModuleId.Value, 1);
-
-        //    if (vehicle.ChargerMustBeOffOnChanges)
-        //    {
-        //        await Task.Delay(TimeSpan.FromSeconds(1));
-        //        _vehicleService.SetIsCharging(vehicle.ModuleId, true);
-        //    }
-
-        //    var result = Policy.HandleResult<bool>(b => b)
-        //        .WaitAndRetry(3, r => TimeSpan.FromSeconds(5))
-        //        .ExecuteAndCapture(() => GetIsCharging(chargePoint, vehicle));
-
-        //    if (result.Outcome == OutcomeType.Failure) { throw new ApplicationException("Car did not start charging"); }
-        //}
     }
 }

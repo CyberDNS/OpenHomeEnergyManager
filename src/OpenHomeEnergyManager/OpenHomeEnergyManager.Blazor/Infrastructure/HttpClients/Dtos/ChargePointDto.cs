@@ -18,5 +18,9 @@ namespace OpenHomeEnergyManager.Blazor.Infrastructure.HttpClients.Dtos
         public int ModuleId { get; set; }
 
         public string Image { get; set; }
+
+        public int VehicleId { get; set; }
+
+        public string CurrentChargeMode { get; set; }
     }
 }

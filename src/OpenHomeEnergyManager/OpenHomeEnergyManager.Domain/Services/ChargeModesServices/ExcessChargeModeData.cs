@@ -13,8 +13,6 @@ namespace OpenHomeEnergyManager.Domain.Services.ChargeModesServices
 
         public DateTime StoppedChargingAt { get; set; } = DateTime.MinValue;
 
-        public int Phases { get; set; } = 1;
-
         public DateTime PhasesChangeTo3At { get; set; } = DateTime.UtcNow;
         public DateTime PhasesChangeTo1At { get; set; } = DateTime.UtcNow;
 

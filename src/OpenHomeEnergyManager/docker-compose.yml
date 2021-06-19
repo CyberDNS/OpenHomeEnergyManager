@@ -9,7 +9,12 @@ services:
 
   openhomeenergymanager.api:
     image: ${DOCKER_REGISTRY-}openhomeenergymanagerapi
+    network_mode: "host"
     build:
       context: .
       dockerfile: OpenHomeEnergyManager.Api/Dockerfile
+    volumes:
+        - data:/app/data
 
+volumes:
+    data:

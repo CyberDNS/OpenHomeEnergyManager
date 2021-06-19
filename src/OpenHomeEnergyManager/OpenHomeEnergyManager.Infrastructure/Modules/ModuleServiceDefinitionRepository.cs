@@ -3,6 +3,7 @@ using OpenHomeEnergyManager.Infrastructure.Modules.HomeAssistant;
 using OpenHomeEnergyManager.Infrastructure.Modules.OpenWb;
 using OpenHomeEnergyManager.Infrastructure.Modules.SmaHomeManager;
 using OpenHomeEnergyManager.Infrastructure.Modules.SmaTriPower;
+using OpenHomeEnergyManager.Infrastructure.Modules.Tesla;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,7 +24,8 @@ namespace OpenHomeEnergyManager.Infrastructure.Modules
                 new SmaHomeManagerServiceDefinition(),
                 new SmaTriPowerServiceDefinition(),
                 new OpenWbServiceDefinition(),
-                new TeslaHomeAssistantServiceDefinition()
+                new TeslaHomeAssistantServiceDefinition(),
+                new TeslaServiceDefinition()
             };
         }
 

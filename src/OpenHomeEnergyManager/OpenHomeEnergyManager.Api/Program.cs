@@ -1,7 +1,10 @@
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using OpenHomeEnergyManager.Infrastructure.EntityFramework;
 using Serilog;
 using System;
 using System.Collections.Generic;
@@ -14,7 +17,18 @@ namespace OpenHomeEnergyManager.Api
     {
         public static void Main(string[] args)
         {
-            CreateHostBuilder(args).Build().Run();
+            var host = CreateHostBuilder(args).Build();
+
+            IServiceProvider serviceProvider = host.Services;
+            IServiceScopeFactory scopeFactory = serviceProvider.GetService<IServiceScopeFactory>();
+
+            using (var scope = scopeFactory.CreateScope())
+            {
+                OpenHomeEnergyManagerDbContext context = scope.ServiceProvider.GetService<OpenHomeEnergyManagerDbContext>();
+                context.Database.Migrate();
+            }
+
+            host.Run();
         }
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>

@@ -21,29 +21,3 @@
 </MudContainer>
 
 <MudFab Color="Color.Primary" Icon="@Icons.Filled.Add" Class="fab-button-bottom-right" OnClick="AddChargePoint" />
-
-@code {
-
-    [Inject] private ChargePointClient _chargePointClient { get; set; }
-
-    private IList<ChargePointDto> _chargePoints = null;
-
-    protected override async Task OnParametersSetAsync()
-    {
-        _chargePoints = (await _chargePointClient.GetAllAsync()).ToList();
-    }
-
-    private void AddChargePoint()
-    {
-        Random rnd = new Random((int)DateTime.Now.Ticks);
-        int image = rnd.Next(1, 11);
-
-        _chargePoints.Add(new ChargePointDto() { Image = $"{image}.jpg" });
-    }
-
-    public void OnChargePointRemoved(object target, ChargePointDto chargePoint)
-    {
-        _chargePoints.Remove(chargePoint);
-        StateHasChanged();
-    }
-}

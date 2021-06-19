@@ -28,7 +28,7 @@ namespace OpenHomeEnergyManager.Domain.Services.ChargeModesServices
 
         public async Task LoopAsync(ChargePoint chargePoint)
         {
-            var chargeMode = GetCharge(chargePoint.CurrentChargeMode);
+            var chargeMode = GetChargeMode(chargePoint.CurrentChargeMode);
             if ((chargeMode is not null) &&
                 (chargePoint.ModuleId.HasValue) &&
                 (chargePoint.VehicleId.HasValue) &&
@@ -39,7 +39,7 @@ namespace OpenHomeEnergyManager.Domain.Services.ChargeModesServices
             }
         }
 
-        private IChargeMode GetCharge(string uniqueIdentifier)
+        private IChargeMode GetChargeMode(string uniqueIdentifier)
         {
             switch (uniqueIdentifier)
             {

@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using OpenHomeEnergyManager.Api.Controllers.V1.Dtos;
 using OpenHomeEnergyManager.Domain.Model.ChargePointAggregate;
 using OpenHomeEnergyManager.Domain.Services.ChargePointServices;
@@ -16,12 +17,14 @@ namespace OpenHomeEnergyManager.Api.Controllers.V1
     [ApiController]
     public class ChargePointsController : ControllerBase
     {
+        private readonly ILogger _logger;
         private readonly IChargePointRepository _chargePointRepository;
         private readonly ChargePointService _chargePointService;
         private readonly IMapper _mapper;
 
-        public ChargePointsController(IChargePointRepository chargePointRepository, ChargePointService chargePointService, IMapper mapper)
+        public ChargePointsController(ILogger<ChargePointsController> logger, IChargePointRepository chargePointRepository, ChargePointService chargePointService, IMapper mapper)
         {
+            _logger = logger;
             _chargePointRepository = chargePointRepository;
             _chargePointService = chargePointService;
             _mapper = mapper;
@@ -30,6 +33,8 @@ namespace OpenHomeEnergyManager.Api.Controllers.V1
         [HttpGet]
         public IActionResult Get()
         {
+            _logger.LogError("Tedt");
+
             var result = _chargePointRepository.GetAll().Select(c => _mapper.Map<ChargePointDto>(c)).ToArray();
 
             return Ok(result);
@@ -72,7 +77,7 @@ namespace OpenHomeEnergyManager.Api.Controllers.V1
         {
             ChargePoint chargePoint = await _chargePointRepository.FindByIdAsync(id);
 
-            if (!chargePoint.ModuleId.HasValue) { return NotFound(); }
+            if (!chargePoint.ModuleId.HasValue || chargePoint.ModuleId < 1) { return NotFound(); }
             var current = _chargePointService.GetCurrentData(chargePoint.ModuleId.Value);
 
             return Ok(current);

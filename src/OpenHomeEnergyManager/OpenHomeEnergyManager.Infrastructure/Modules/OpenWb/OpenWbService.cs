@@ -1,6 +1,4 @@
-﻿using InfluxDB.Client;
-using InfluxDB.Client.Api.Domain;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using MQTTnet;
 using MQTTnet.Client;
 using MQTTnet.Client.Disconnecting;
