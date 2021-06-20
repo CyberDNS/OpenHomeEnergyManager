@@ -1,7 +1,9 @@
 ﻿using System;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using OpenHomeEnergyManager.Api.Controllers.V1.ChargePoints.Commands;
@@ -21,21 +23,46 @@ namespace OpenHomeEnergyManager.Api.Controllers.V1.ChargePoints
         private readonly IChargePointRepository _chargePointRepository;
         private readonly ChargePointService _chargePointService;
         private readonly IMapper _mapper;
+        private readonly IWebHostEnvironment _env;
 
-        public ChargePointsController(ILogger<ChargePointsController> logger, IChargePointRepository chargePointRepository, ChargePointService chargePointService, IMapper mapper)
+        public ChargePointsController(ILogger<ChargePointsController> logger, IChargePointRepository chargePointRepository, ChargePointService chargePointService, IMapper mapper, IWebHostEnvironment env)
         {
             _logger = logger;
             _chargePointRepository = chargePointRepository;
             _chargePointService = chargePointService;
             _mapper = mapper;
+            _env = env;
         }
 
         [HttpGet]
-        public IActionResult Get()
+        public IActionResult GetAll()
         {
             var result = _chargePointRepository.GetAll().Select(c => _mapper.Map<ChargePointDto>(c)).ToArray();
+            foreach (var chargePoint in result) { chargePoint.Image = GetImage(chargePoint.Id); }
 
             return Ok(result);
+        }
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> Get(int id)
+        {
+            var result = _mapper.Map<ChargePointDto>(await _chargePointRepository.FindByIdAsync(id));
+            result.Image = GetImage(result.Id);
+
+            return Ok(result);
+        }
+
+        private string GetImage(int id)
+        {
+            Random random = new Random();
+
+            string filename = $"chargepoint_{id}";
+            var folderPath = Path.Combine(_env.ContentRootPath, "data", "images");
+
+            var filenameWithExtension = Directory.GetFiles(folderPath, $"{filename}.*").SingleOrDefault();
+            if (filenameWithExtension is null) { return null; }
+
+            return $"{Path.GetFileName(filenameWithExtension)}?{random.Next(0, 100000)}";
         }
 
         [HttpPost]

@@ -11,8 +11,6 @@ namespace OpenHomeEnergyManager.Domain.Model.VehicleAggregate
     {
         public string Name { get; set; }
 
-        public string Image { get; private set; }
-
         public int? ModuleId { get; set; }
 
         public bool ChargerMustBeOffOnChanges { get; set; }

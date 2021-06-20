@@ -19,7 +19,7 @@ namespace OpenHomeEnergyManager.Api.Controllers.V1.Images
     {
         private readonly IWebHostEnvironment _env;
 
-        public ImagesController(IWebHostEnvironment env, ILogger<ImagesController> logger)
+        public ImagesController(IWebHostEnvironment env)
         {
             _env = env;
         }
@@ -30,11 +30,7 @@ namespace OpenHomeEnergyManager.Api.Controllers.V1.Images
             try
             {
                 var folderPath = Path.Combine(_env.ContentRootPath, "data", "images");
-
-                var filenameWithExtension = Directory.GetFiles(folderPath, $"{filename}.*").SingleOrDefault();
-                if (filenameWithExtension is null) { return NotFound(); } 
-
-                var filePath = Path.Combine(folderPath, filenameWithExtension);
+                var filePath = Path.Combine(folderPath, filename);
 
                 MemoryStream memory = new MemoryStream();
                 using (FileStream stream = new FileStream(filePath, FileMode.Open))
@@ -55,7 +51,6 @@ namespace OpenHomeEnergyManager.Api.Controllers.V1.Images
         public async Task<ActionResult> Upload([FromForm] IFormFile file)
         {
             var folderPath = Path.Combine(_env.ContentRootPath, "data", "images");
-            if (!Directory.Exists(folderPath)) { Directory.CreateDirectory(folderPath); }
 
             var filePath = Path.Combine(folderPath, file.FileName);
             await using FileStream fs = new(filePath, FileMode.Create);

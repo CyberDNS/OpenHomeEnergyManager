@@ -27,7 +27,7 @@ namespace OpenHomeEnergyManager.Infrastructure.ChargeModes
 
         public Task StartAsync(CancellationToken cancellationToken)
         {
-            return Task.CompletedTask;
+            //return Task.CompletedTask;
 
             _cancellationTokenSource = new CancellationTokenSource();
 

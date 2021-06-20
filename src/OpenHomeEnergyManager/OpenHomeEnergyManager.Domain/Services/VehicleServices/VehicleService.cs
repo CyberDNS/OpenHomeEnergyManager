@@ -24,6 +24,9 @@ namespace OpenHomeEnergyManager.Domain.Services.VehicleServices
             return new VehicleDataset()
             {
                 IsCharging = moduleService.GetCapability<IsChargingCapability>("IS_CHARGING").Value,
+                IsChargedToChargeLimit = moduleService.GetCapability<IsChargedToChargeLimitCapability>("IS_CHARGED_TO_CHARGE_LIMIT").Value,
+                ChargeLimit = moduleService.GetCapability<ChargeLimitCapability>("CHARGE_LIMIT").Value,
+                StateOfCharge = moduleService.GetCapability<StateOfChargeCapability>("SOC").Value,
             };
         }
 

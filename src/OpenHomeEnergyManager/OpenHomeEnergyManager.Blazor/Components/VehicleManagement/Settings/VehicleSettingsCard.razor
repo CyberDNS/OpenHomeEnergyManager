@@ -7,7 +7,7 @@
 
     <MudCard>
         <div style="position:relative">
-            <MudCardMedia Image="@($"api/Images/vehicle_{Vehicle.Id}")" Height="450" />
+            <MudCardMedia Image="@($"api/Images/{Vehicle.Image}")" Height="450" />
             <MudButton HtmlTag="label" Variant="Variant.Filled" Color="Color.Secondary" StartIcon="@Icons.Filled.Image" for="@($"fileInput_{Vehicle.Id}")" Style="position: absolute; right: 10px; bottom: 10px;">
                 Upload picture
             </MudButton>

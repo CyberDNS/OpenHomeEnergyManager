@@ -19,6 +19,9 @@ namespace OpenHomeEnergyManager.Infrastructure.Modules.Tesla.Authentication.Dtos
 
             [JsonPropertyName("charging_state")]
             public string ChargingState { get; set; }
+
+            [JsonPropertyName("charge_limit_soc")]
+            public int ChargeLimitSoc { get; set; }
         }
     }
 }

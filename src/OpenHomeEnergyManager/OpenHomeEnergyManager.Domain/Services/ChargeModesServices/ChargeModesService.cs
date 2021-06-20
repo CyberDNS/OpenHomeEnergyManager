@@ -13,7 +13,6 @@ namespace OpenHomeEnergyManager.Domain.Services.ChargeModesServices
 {
     public class ChargeModesService : IChargeModesService
     {
-        private readonly IServiceScopeFactory _serviceScopeFactory;
         private readonly IServiceProvider _serviceProvider;
         private readonly IVehicleRepository _vehicleRepository;
         private readonly ChargePointService _chargePointService;

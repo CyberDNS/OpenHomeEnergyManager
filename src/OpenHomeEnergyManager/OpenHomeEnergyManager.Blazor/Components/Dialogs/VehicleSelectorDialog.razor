@@ -1,0 +1,27 @@
+﻿<MudDialog DisableSidePadding="true">
+    <DialogContent>
+        <MudContainer Fixed="true" Class="d-flex flex-row flex-wrap" Style="max-height: 400px; overflow-y: scroll">
+            @if (_vehicles is not null)
+            {
+                @foreach (var vehicle in _vehicles)
+                {
+                    @if (vehicle.Image is not null)
+                    {
+                        <MudPaper Elevation="3" Class="ma-1" Style="height: 100px; width: 150px; overflow: hidden" @onclick="@(() => Submit(vehicle.Id))">
+                            <MudElement HtmlTag="img" src="@($"api/Images/{vehicle.Image}")" Style="height: 100px; margin-left: 50%; transform: translateX(-50%); " />
+                        </MudPaper>
+                    }
+                    else
+                    {
+                        <MudPaper Elevation="3" Class="ma-1 d-flex justify-center align-center" Style="position: absolute; right: 10px; bottom: 10px; height: 100px; width: 150px;" @onclick="@(() => Submit(vehicle.Id))">
+                            <MudText Typo="Typo.body2">@vehicle.Name</MudText>
+                        </MudPaper>
+                    }
+                }
+                <MudPaper Elevation="3" Class="ma-1 d-flex justify-center align-center" Style="height: 100px; width: 150px;" @onclick="@(() => Submit(null))">
+                    <MudIcon Icon="@Icons.Material.Filled.Block" Color="Color.Default" Size="Size.Large" />
+                </MudPaper>
+            }
+        </MudContainer>
+    </DialogContent>
+</MudDialog>

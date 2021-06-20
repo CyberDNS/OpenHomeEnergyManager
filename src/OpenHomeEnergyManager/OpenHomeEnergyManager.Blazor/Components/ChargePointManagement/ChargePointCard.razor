@@ -2,8 +2,26 @@
 
 <MudCard>
     <div style="position:relative">
-        <MudCardMedia Image="@($"api/Images/chargepoint_{ChargePoint.Id}")" Height="450" />
-        <MudPaper Class="pa-16 ma-2" Elevation="3" Style="position: absolute; right: 10px; bottom: 10px;" @onclick="AttributeVehicle"></MudPaper>
+        <MudCardMedia Image="@($"api/Images/{ChargePoint.Image}")" Height="450" />
+        @if ((_vehicle is not null) && (_vehicle.Image is not null))
+        {
+            <MudPaper Elevation="3" Class="ma-2" Style="position: absolute; right: 10px; bottom: 10px; height: 100px; width: 150px; overflow: hidden" @onclick="AttributeVehicle">
+                <MudElement HtmlTag="img" src="@($"api/Images/{_vehicle.Image}")" Style="height: 100px; margin-left: 50%; transform: translateX(-50%); " />
+            </MudPaper>
+        }
+        else
+        {
+            <MudPaper Elevation="3" Class="ma-2 d-flex justify-center align-center" Style="position: absolute; right: 10px; bottom: 10px; height: 100px; width: 150px;" @onclick="AttributeVehicle">
+                @if (_vehicle is not null)
+                {
+                    <MudText Typo="Typo.body2">@_vehicle.Name</MudText>
+                }
+                else
+                {
+                    <MudIcon Icon="@Icons.Material.Filled.Block" Color="Color.Default" Size="Size.Large" />
+                }
+            </MudPaper>
+        }
     </div>
     <MudCardContent>
         <MudText>@ChargePoint.Name</MudText>

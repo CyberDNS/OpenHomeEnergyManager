@@ -17,5 +17,6 @@ namespace OpenHomeEnergyManager.Domain.Services.ChargeModesServices
         public DateTime PhasesChangeTo1At { get; set; } = DateTime.UtcNow;
 
         public DateTime LastCurrentChangeAt { get; set; } = DateTime.UtcNow;
+        public int LastCurrentDelta { get; set; } = 0;
     }
 }

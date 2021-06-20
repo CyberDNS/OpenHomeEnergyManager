@@ -31,7 +31,10 @@ namespace OpenHomeEnergyManager.Infrastructure.Modules.Tesla
             _loginClient = loginClient;
             _teslaClient = teslaClient;
             RegisterCapability(new StateOfChargeCapability("SOC", "State of Charge"));
+            RegisterCapability(new ChargeLimitCapability("CHARGE_LIMIT", "Charge Limit"));
             RegisterCapability(new IsChargingCapability("IS_CHARGING", "Is Charging"));
+            RegisterCapability(new IsChargedToChargeLimitCapability("IS_CHARGED_TO_CHARGE_LIMIT", "Is charged-up to the limit"));
+
             RegisterCapability(new SetIsChargingCapability("SET_IS_CHARGING", "Set Is Charging", SetIsCharging));
         }
 
@@ -66,7 +69,10 @@ namespace OpenHomeEnergyManager.Infrastructure.Modules.Tesla
                 if (chargeState is not null)
                 {
                     GetCapability<StateOfChargeCapability>("SOC").Value = Convert.ToDecimal(chargeState.Response.BatteryLevel, CultureInfo.InvariantCulture.NumberFormat);
+                    GetCapability<ChargeLimitCapability>("CHARGE_LIMIT").Value = Convert.ToDecimal(chargeState.Response.ChargeLimitSoc, CultureInfo.InvariantCulture.NumberFormat);
+
                     GetCapability<IsChargingCapability>("IS_CHARGING").Value = chargeState.Response.ChargingState.Equals("Charging", StringComparison.OrdinalIgnoreCase);
+                    GetCapability<IsChargedToChargeLimitCapability>("IS_CHARGED_TO_CHARGE_LIMIT").Value = chargeState.Response.ChargingState.Equals("Complete", StringComparison.OrdinalIgnoreCase);
                 }
             }
         }

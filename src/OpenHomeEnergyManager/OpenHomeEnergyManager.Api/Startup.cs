@@ -24,6 +24,7 @@ using Polly;
 using Polly.Extensions.Http;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Reflection;
@@ -94,6 +95,11 @@ namespace OpenHomeEnergyManager.Api
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, OpenHomeEnergyManagerDbContext dbContext)
         {
+            var folderPath = Path.Combine(env.ContentRootPath, "data", "images");
+            if (!Directory.Exists(folderPath)) { Directory.CreateDirectory(folderPath); }
+
+            dbContext.Database.Migrate();
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();

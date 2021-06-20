@@ -78,7 +78,9 @@ namespace OpenHomeEnergyManager.Blazor.Components.VehicleManagement.Settings
             var extension = Path.GetExtension(e.File.Name);
             await _imagesClient.UploadAsync(e.File, $"vehicle_{Vehicle.Id}{extension}");
 
-            _navigationManager.NavigateTo(_navigationManager.Uri, forceLoad: true);
+            Vehicle = await _vehiclesClient.GetAsync(Vehicle.Id);
+
+            StateHasChanged();
         }
     }
 }

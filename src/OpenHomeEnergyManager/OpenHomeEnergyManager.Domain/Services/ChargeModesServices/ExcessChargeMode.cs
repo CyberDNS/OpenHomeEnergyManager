@@ -33,18 +33,17 @@ namespace OpenHomeEnergyManager.Domain.Services.ChargeModesServices
             int exportedPower = _smaHomeManagerService.GetCapability<PowerCapability>("EXPORTED_POWER").Value;
             int importedPower = _smaHomeManagerService.GetCapability<PowerCapability>("IMPORTED_POWER").Value;
 
-            //int power = (exportedPower - importedPower) + 2000;
-
-            //exportedPower = 0;
-            //importedPower = 0;
-            //if (power >= 0) { exportedPower = power; }
-            //else { importedPower = Math.Abs(power); }
-
             _logger.LogDebug("POWER / Ex: {ExportedPower} Im: {ImportedPower} Last Im: {lastImport}", exportedPower, importedPower, _data.LastImportedAt);
             _logger.LogDebug("CHARGE / Started: {Started} Stopped: {Stopped}", _data.StartedChargingAt, _data.StoppedChargingAt);
 
             ChargePointDataset chargePointData = _chargePointService.GetCurrentData(chargePoint.ModuleId.Value);
             VehicleDataset vehicleData = _vehicleService.GetCurrentData(vehicle.ModuleId.Value);
+
+            if (vehicleData.IsChargedToChargeLimit) 
+            {
+                _logger.LogInformation("Vehicle {Name} is charge to its limit of {Limit}", vehicle.Name, vehicleData.ChargeLimit);
+                return;
+            }
 
             bool isCharging = GetIsCharging(chargePoint, vehicle);
             bool isNotCharging = GetIsNotCharging(chargePoint, vehicle);
@@ -104,6 +103,7 @@ namespace OpenHomeEnergyManager.Domain.Services.ChargeModesServices
                     {
                         _data.PhasesChangeTo3At = DateTime.UtcNow;
                         _data.LastCurrentChangeAt = DateTime.UtcNow;
+                        _data.LastCurrentDelta = 0;
 
                         _logger.LogInformation("Setting phases: {phases}", 3);
                         await SetPhases(chargePoint, vehicle, 3);
@@ -113,9 +113,10 @@ namespace OpenHomeEnergyManager.Domain.Services.ChargeModesServices
                 {
                     int newCharge = Math.Min(currentCharge + deltaCharge, 16);
 
-                    if ((currentCharge != newCharge) && (DateTime.UtcNow - _data.LastCurrentChangeAt).TotalSeconds > (deltaCharge * 10))
+                    if ((currentCharge != newCharge) && (DateTime.UtcNow - _data.LastCurrentChangeAt).TotalSeconds > (_data.LastCurrentDelta * 10))
                     {
                         _data.LastCurrentChangeAt = DateTime.UtcNow;
+                        _data.LastCurrentDelta = deltaCharge;
 
                         _logger.LogInformation("Increase Current: {old} >>> {new}", currentCharge, newCharge);
                         SetCurrent(chargePoint, newCharge);
@@ -133,6 +134,7 @@ namespace OpenHomeEnergyManager.Domain.Services.ChargeModesServices
                     {
                         _data.PhasesChangeTo1At = DateTime.UtcNow;
                         _data.LastCurrentChangeAt = DateTime.UtcNow;
+                        _data.LastCurrentDelta = 0;
 
                         _logger.LogInformation("Setting phases: {phases}", 1);
                         await SetPhases(chargePoint, vehicle, 1);
@@ -142,9 +144,10 @@ namespace OpenHomeEnergyManager.Domain.Services.ChargeModesServices
                 {
                     int newCharge = Math.Max(currentCharge - deltaCharge, 6);
 
-                    if ((currentCharge != newCharge) && (DateTime.UtcNow - _data.LastCurrentChangeAt).TotalSeconds > (deltaCharge * 10))
+                    if ((currentCharge != newCharge) && (DateTime.UtcNow - _data.LastCurrentChangeAt).TotalSeconds > (_data.LastCurrentDelta * 10))
                     {
                         _data.LastCurrentChangeAt = DateTime.UtcNow;
+                        _data.LastCurrentDelta = deltaCharge;
 
                         _logger.LogInformation("Decrease Current: {old} >>> {new}", currentCharge, newCharge);
                         SetCurrent(chargePoint, newCharge);

@@ -15,6 +15,7 @@ using OpenHomeEnergyManager.Blazor.Infrastructure.HttpClients.ChargePoints.Comma
 using OpenHomeEnergyManager.Blazor.Infrastructure.HttpClients.ChargePoints.Queries;
 using OpenHomeEnergyManager.Blazor.Infrastructure.HttpClients.Images;
 using OpenHomeEnergyManager.Blazor.Infrastructure.HttpClients.Modules.Queries;
+using OpenHomeEnergyManager.Blazor.Infrastructure.HttpClients.Vehicles;
 
 namespace OpenHomeEnergyManager.Blazor.Components.ChargePointManagement.Settings
 {
@@ -79,7 +80,9 @@ namespace OpenHomeEnergyManager.Blazor.Components.ChargePointManagement.Settings
             var extension = Path.GetExtension(e.File.Name);
             await _imagesClient.UploadAsync(e.File, $"chargepoint_{ChargePoint.Id}{extension}");
 
-            _navigationManager.NavigateTo(_navigationManager.Uri, forceLoad: true);
+            ChargePoint = await _chargePointClient.GetAsync(ChargePoint.Id);
+
+            StateHasChanged();
         }
     }
 }

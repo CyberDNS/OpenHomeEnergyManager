@@ -27,6 +27,15 @@ namespace OpenHomeEnergyManager.Blazor.Infrastructure.HttpClients.ChargePoints
             return JsonConvert.DeserializeObject<IEnumerable<ChargePointDto>>(stringContent);
         }
 
+        public async Task<ChargePointDto> GetAsync(int id, CancellationToken cancellationToken = default)
+        {
+            var response = await _httpClient.GetAsync($"{id}", cancellationToken);
+            response.EnsureSuccessStatusCode();
+
+            var stringContent = await response.Content.ReadAsStringAsync();
+            return JsonConvert.DeserializeObject<ChargePointDto>(stringContent);
+        }
+
         public async Task<ChargePointDatasetDto> GetNowDataAsync(int id, CancellationToken cancellationToken = default)
         {
             var response = await _httpClient.GetAsync($"{id}/Data/Now", cancellationToken);
@@ -58,6 +67,12 @@ namespace OpenHomeEnergyManager.Blazor.Infrastructure.HttpClients.ChargePoints
         public async Task SelectChargeModeAsync(int id, SelectChargeModeDto command, CancellationToken cancellationToken = default)
         {
             var response = await _httpClient.PutAsync($"{id}/Commands/SelectChargeMode", new StringContent(JsonConvert.SerializeObject(command), Encoding.UTF8, "application/json"), cancellationToken);
+            response.EnsureSuccessStatusCode();
+        }
+
+        public async Task AttributeVehicleAsync(int id, AttributeVehicleDto command, CancellationToken cancellationToken = default)
+        {
+            var response = await _httpClient.PutAsync($"{id}/Commands/AttributeVehicle", new StringContent(JsonConvert.SerializeObject(command), Encoding.UTF8, "application/json"), cancellationToken);
             response.EnsureSuccessStatusCode();
         }
 

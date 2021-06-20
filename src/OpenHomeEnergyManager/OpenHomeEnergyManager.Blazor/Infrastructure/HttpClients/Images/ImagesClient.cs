@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
+using System.Runtime.InteropServices.ComTypes;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.Extensions.Logging;
@@ -20,6 +22,7 @@ namespace OpenHomeEnergyManager.Blazor.Infrastructure.HttpClients.Images
             _logger = logger;
             _httpClient = httpClient;
         }
+
 
         public async Task<(Stream Stream, string MediaType)> DownloadAsync(string fileName)
         {
