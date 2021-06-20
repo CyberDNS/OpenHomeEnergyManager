@@ -1,15 +1,19 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
+using Microsoft.AspNetCore.Http.Extensions;
 using MudBlazor;
 using OpenHomeEnergyManager.Blazor.Components.Dialogs;
 using OpenHomeEnergyManager.Blazor.Infrastructure.HttpClients.ChargePoints;
 using OpenHomeEnergyManager.Blazor.Infrastructure.HttpClients.ChargePoints.Commands;
 using OpenHomeEnergyManager.Blazor.Infrastructure.HttpClients.ChargePoints.Queries;
+using OpenHomeEnergyManager.Blazor.Infrastructure.HttpClients.Images;
 using OpenHomeEnergyManager.Blazor.Infrastructure.HttpClients.Modules.Queries;
 
 namespace OpenHomeEnergyManager.Blazor.Components.ChargePointManagement.Settings
@@ -18,13 +22,15 @@ namespace OpenHomeEnergyManager.Blazor.Components.ChargePointManagement.Settings
     {
         [Inject] private IDialogService _dialogService { get; set; }
         [Inject] private ChargePointsClient _chargePointClient { get; set; }
-
+        [Inject] private ImagesClient _imagesClient { get; set; }
+        [Inject] private NavigationManager _navigationManager { get; set; }
 
         [CascadingParameter] public IEnumerable<ModuleDto> Modules { get; set; }
         [Parameter] public ChargePointDto ChargePoint { get; set; }
         [Parameter] public EventHandler<ChargePointDto> OnDeleted { get; set; }
 
         private ChargePointSettingsModel _model;
+        private IBrowserFile _file;
 
         protected override void OnParametersSet()
         {
@@ -65,6 +71,15 @@ namespace OpenHomeEnergyManager.Blazor.Components.ChargePointManagement.Settings
                 await _chargePointClient.DeleteAsync(ChargePoint.Id);
                 OnDeleted.Invoke(this, ChargePoint);
             }
+        }
+
+
+        private async Task UploadFile(InputFileChangeEventArgs e)
+        {
+            var extension = Path.GetExtension(e.File.Name);
+            await _imagesClient.UploadAsync(e.File, $"chargepoint_{ChargePoint.Id}{extension}");
+
+            _navigationManager.NavigateTo(_navigationManager.Uri, forceLoad: true);
         }
     }
 }

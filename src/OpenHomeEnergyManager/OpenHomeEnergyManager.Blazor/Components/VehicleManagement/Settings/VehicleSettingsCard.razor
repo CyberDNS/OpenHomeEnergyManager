@@ -1,21 +1,29 @@
 ﻿@using OpenHomeEnergyManager.Blazor.Infrastructure.HttpClients.Modules.Queries
 
 <EditForm Model="@_model" OnValidSubmit="OnValidSubmit">
-	<DataAnnotationsValidator />
-	<MudCard>
-		<MudCardMedia Image="@($"img/EV/{_model.Image}")" Height="200" />
-		<MudCardContent>
-			<MudTextField Label="Name" @bind-Value="_model.Name" For="@(() => _model.Name)" Variant="Variant.Text" />
-			<MudSelect T="ModuleDto" Value="@_model.Module" ValueChanged="@OnModuleChanged" Label="Module">
-				@foreach (var module in Modules)
-				{
-				<MudSelectItem Value="module">@module.Name</MudSelectItem>
-			    }
-		   </MudSelect>
-  </MudCardContent>
-  <MudCardActions Class="d-flex justify-end py-2 px-1 mt-6">
-   <MudButton Variant="Variant.Filled" Color="Color.Error" Class="pa-2 mx-2" OnClick="OnDelete">Delete</MudButton>
-   <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Info" Class="pa-2 mx-2">Update</MudButton>
-  </MudCardActions>
- </MudCard>
+    <DataAnnotationsValidator />
+
+    <InputFile id="@($"fileInput_{Vehicle.Id}")" OnChange="UploadFile" hidden />
+
+    <MudCard>
+        <div style="position:relative">
+            <MudCardMedia Image="@($"api/Images/vehicle_{Vehicle.Id}")" Height="450" />
+            <MudButton HtmlTag="label" Variant="Variant.Filled" Color="Color.Secondary" StartIcon="@Icons.Filled.Image" for="@($"fileInput_{Vehicle.Id}")" Style="position: absolute; right: 10px; bottom: 10px;">
+                Upload picture
+            </MudButton>
+        </div>
+        <MudCardContent>
+            <MudTextField Label="Name" @bind-Value="_model.Name" For="@(() => _model.Name)" Variant="Variant.Text" />
+            <MudSelect T="ModuleDto" Value="@_model.Module" ValueChanged="@OnModuleChanged" Label="Module">
+                @foreach (var module in Modules)
+                {
+                    <MudSelectItem Value="module">@module.Name</MudSelectItem>
+                }
+            </MudSelect>
+        </MudCardContent>
+        <MudCardActions Class="d-flex justify-end py-2 px-1 mt-6">
+            <MudButton Variant="Variant.Filled" Color="Color.Error" Class="pa-2 mx-2" OnClick="OnDelete">Delete</MudButton>
+            <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Info" Class="pa-2 mx-2">Update</MudButton>
+        </MudCardActions>
+    </MudCard>
 </EditForm>

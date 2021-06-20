@@ -22,8 +22,8 @@ namespace OpenHomeEnergyManager.Infrastructure.EntityFramework.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("CurrentChargeMode")
-                        .HasColumnType("TEXT");
+                    b.Property<int>("CurrentChargeMode")
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("Image")
                         .HasColumnType("TEXT");
@@ -74,7 +74,7 @@ namespace OpenHomeEnergyManager.Infrastructure.EntityFramework.Migrations
                     b.Property<string>("Image")
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("ModuleId")
+                    b.Property<int?>("ModuleId")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Name")

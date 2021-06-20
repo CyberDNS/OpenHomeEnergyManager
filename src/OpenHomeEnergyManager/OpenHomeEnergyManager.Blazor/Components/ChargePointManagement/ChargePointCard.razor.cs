@@ -62,6 +62,11 @@ namespace OpenHomeEnergyManager.Blazor.Components.ChargePointManagement
 			return ChargePoint.CurrentChargeMode == chargeMode;
 		}
 
+		private void AttributeVehicle()
+        {
+
+        }
+
         public void Dispose()
         {
             if (_timer is not null)

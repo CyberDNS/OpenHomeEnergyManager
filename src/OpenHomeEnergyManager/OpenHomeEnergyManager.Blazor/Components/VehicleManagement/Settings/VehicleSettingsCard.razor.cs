@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
@@ -8,6 +9,7 @@ using MudBlazor;
 using OpenHomeEnergyManager.Blazor.Components.ChargePointManagement.Settings;
 using OpenHomeEnergyManager.Blazor.Components.Dialogs;
 using OpenHomeEnergyManager.Blazor.Infrastructure.HttpClients.ChargePoints;
+using OpenHomeEnergyManager.Blazor.Infrastructure.HttpClients.Images;
 using OpenHomeEnergyManager.Blazor.Infrastructure.HttpClients.Modules.Queries;
 using OpenHomeEnergyManager.Blazor.Infrastructure.HttpClients.Vehicles;
 using OpenHomeEnergyManager.Blazor.Infrastructure.HttpClients.Vehicles.Commands;
@@ -19,6 +21,8 @@ namespace OpenHomeEnergyManager.Blazor.Components.VehicleManagement.Settings
     {
         [Inject] private IDialogService _dialogService { get; set; }
         [Inject] private VehiclesClient _vehiclesClient { get; set; }
+        [Inject] private ImagesClient _imagesClient { get; set; }
+        [Inject] private NavigationManager _navigationManager { get; set; }
 
 
         [CascadingParameter] public IEnumerable<ModuleDto> Modules { get; set; }
@@ -67,6 +71,14 @@ namespace OpenHomeEnergyManager.Blazor.Components.VehicleManagement.Settings
                 await _vehiclesClient.DeleteAsync(Vehicle.Id);
                 OnDeleted.Invoke(this, Vehicle);
             }
+        }
+
+        private async Task UploadFile(InputFileChangeEventArgs e)
+        {
+            var extension = Path.GetExtension(e.File.Name);
+            await _imagesClient.UploadAsync(e.File, $"vehicle_{Vehicle.Id}{extension}");
+
+            _navigationManager.NavigateTo(_navigationManager.Uri, forceLoad: true);
         }
     }
 }

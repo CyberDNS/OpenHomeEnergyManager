@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -8,6 +9,7 @@ using MudBlazor;
 using MudBlazor.Services;
 using OpenHomeEnergyManager.Blazor.Infrastructure.HttpClients;
 using OpenHomeEnergyManager.Blazor.Infrastructure.HttpClients.ChargePoints;
+using OpenHomeEnergyManager.Blazor.Infrastructure.HttpClients.Images;
 using OpenHomeEnergyManager.Blazor.Infrastructure.HttpClients.Modules;
 using OpenHomeEnergyManager.Blazor.Infrastructure.HttpClients.ModuleServiceDefinitions;
 using OpenHomeEnergyManager.Blazor.Infrastructure.HttpClients.Vehicles;
@@ -30,6 +32,7 @@ namespace OpenHomeEnergyManager.Blazor
 
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddControllers();
             services.AddRazorPages();
             services.AddServerSideBlazor();
 
@@ -39,6 +42,8 @@ namespace OpenHomeEnergyManager.Blazor
             services.AddHttpClient<ChargePointsClient>(o => o.BaseAddress = new Uri($"{Configuration.GetValue<string>("HttpClients:Uris:OpenHomeEnergyManagerApi")}ChargePoints/"));
             services.AddHttpClient<VehiclesClient>(o => o.BaseAddress = new Uri($"{Configuration.GetValue<string>("HttpClients:Uris:OpenHomeEnergyManagerApi")}Vehicles/"));
             services.AddHttpClient<ModuleServiceDefinitionsClient>(o => o.BaseAddress = new Uri($"{Configuration.GetValue<string>("HttpClients:Uris:OpenHomeEnergyManagerApi")}ModuleServiceDefinitions/"));
+            services.AddHttpClient<ImagesClient>(o => o.BaseAddress = new Uri($"{Configuration.GetValue<string>("HttpClients:Uris:OpenHomeEnergyManagerApi")}Images/"));
+
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -60,6 +65,7 @@ namespace OpenHomeEnergyManager.Blazor
             {
                 endpoints.MapBlazorHub();
                 endpoints.MapFallbackToPage("/_Host");
+                endpoints.MapControllers();
             });
         }
     }

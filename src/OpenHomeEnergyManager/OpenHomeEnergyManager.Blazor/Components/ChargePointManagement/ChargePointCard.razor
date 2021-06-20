@@ -1,22 +1,25 @@
 ﻿@using OpenHomeEnergyManager.Blazor.Infrastructure.HttpClients.ChargePoints.Shared
 
 <MudCard>
-	<MudCardMedia Image="@($"img/EV/{ChargePoint.Image}")" Height="200" />
-	<MudCardContent>
-		<MudText>@ChargePoint.Name</MudText>
-		<MudGrid>
-			<MudItem>
-				<MudText Typo="Typo.button">@Power W</MudText> / <MudText Typo="Typo.caption">@(PhaseCount)x</MudText> <MudText Typo="Typo.button">@Current A</MudText>
-			</MudItem>
-		</MudGrid>
-	</MudCardContent>
-	<MudCardActions>
-		<MudGrid>
-			<MudItem>
-				<MudButton Variant="@(IsCurrentChargeMode(ChargeModesDto.Direct) ? Variant.Filled : Variant.Outlined)" Color="Color.Primary" OnClick="@(() => SetChargeMode(ChargeModesDto.Direct))">Direct</MudButton>
-				<MudButton Variant="@(IsCurrentChargeMode(ChargeModesDto.Excess) ? Variant.Filled : Variant.Outlined)" Color="Color.Tertiary" OnClick="@(() => SetChargeMode(ChargeModesDto.Excess))">Excess</MudButton>
-				<MudButton Variant="@(IsCurrentChargeMode(ChargeModesDto.Stop) ? Variant.Filled : Variant.Outlined)" Color="Color.Error" OnClick="@(() => SetChargeMode(ChargeModesDto.Stop))">Stop</MudButton>
-			</MudItem>
-		</MudGrid>
-	</MudCardActions>
+    <div style="position:relative">
+        <MudCardMedia Image="@($"api/Images/chargepoint_{ChargePoint.Id}")" Height="450" />
+        <MudPaper Class="pa-16 ma-2" Elevation="3" Style="position: absolute; right: 10px; bottom: 10px;" @onclick="AttributeVehicle"></MudPaper>
+    </div>
+    <MudCardContent>
+        <MudText>@ChargePoint.Name</MudText>
+        <MudGrid>
+            <MudItem>
+                <MudText Typo="Typo.button">@Power W</MudText> / <MudText Typo="Typo.caption">@(PhaseCount)x</MudText> <MudText Typo="Typo.button">@Current A</MudText>
+            </MudItem>
+        </MudGrid>
+    </MudCardContent>
+    <MudCardActions>
+        <MudGrid>
+            <MudItem>
+                <MudButton Variant="@(IsCurrentChargeMode(ChargeModesDto.Direct) ? Variant.Filled : Variant.Outlined)" Color="Color.Primary" OnClick="@(() => SetChargeMode(ChargeModesDto.Direct))">Direct</MudButton>
+                <MudButton Variant="@(IsCurrentChargeMode(ChargeModesDto.Excess) ? Variant.Filled : Variant.Outlined)" Color="Color.Tertiary" OnClick="@(() => SetChargeMode(ChargeModesDto.Excess))">Excess</MudButton>
+                <MudButton Variant="@(IsCurrentChargeMode(ChargeModesDto.Stop) ? Variant.Filled : Variant.Outlined)" Color="Color.Error" OnClick="@(() => SetChargeMode(ChargeModesDto.Stop))">Stop</MudButton>
+            </MudItem>
+        </MudGrid>
+    </MudCardActions>
 </MudCard>
