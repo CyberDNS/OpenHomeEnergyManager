@@ -1,4 +1,5 @@
-﻿@using System.Timers
+﻿@using OpenHomeEnergyManager.Blazor.Infrastructure.HttpClients.ChargePoints.Shared
+
 <MudCard>
 	<MudCardMedia Image="@($"img/EV/{ChargePoint.Image}")" Height="200" />
 	<MudCardContent>
@@ -12,9 +13,9 @@
 	<MudCardActions>
 		<MudGrid>
 			<MudItem>
-				<MudButton Variant="@(IsCurrentChargeMode("DIRECT") ? Variant.Filled : Variant.Outlined)" Color="Color.Primary" OnClick="@(() => SetChargeMode("DIRECT"))">Direct</MudButton>
-				<MudButton Variant="@(IsCurrentChargeMode("EXCESS") ? Variant.Filled : Variant.Outlined)" Color="Color.Tertiary" OnClick="@(() => SetChargeMode("EXCESS"))">Excess</MudButton>
-				<MudButton Variant="@(IsCurrentChargeMode("STOP") ? Variant.Filled : Variant.Outlined)" Color="Color.Error" OnClick="@(() => SetChargeMode("STOP"))">Stop</MudButton>
+				<MudButton Variant="@(IsCurrentChargeMode(ChargeModesDto.Direct) ? Variant.Filled : Variant.Outlined)" Color="Color.Primary" OnClick="@(() => SetChargeMode(ChargeModesDto.Direct))">Direct</MudButton>
+				<MudButton Variant="@(IsCurrentChargeMode(ChargeModesDto.Excess) ? Variant.Filled : Variant.Outlined)" Color="Color.Tertiary" OnClick="@(() => SetChargeMode(ChargeModesDto.Excess))">Excess</MudButton>
+				<MudButton Variant="@(IsCurrentChargeMode(ChargeModesDto.Stop) ? Variant.Filled : Variant.Outlined)" Color="Color.Error" OnClick="@(() => SetChargeMode(ChargeModesDto.Stop))">Stop</MudButton>
 			</MudItem>
 		</MudGrid>
 	</MudCardActions>

@@ -20,7 +20,7 @@ namespace OpenHomeEnergyManager.Domain.Services.ChargeModesServices
 
         private readonly IModuleService _smaHomeManagerService;
 
-        public string UniqueIdentifier => "EXCESS";
+        public ChargeModes ChargeMode => ChargeModes.Excess;
 
         public ExcessChargeMode(ILogger<ExcessChargeMode> logger, ChargePointService chargePointService, VehicleService vehicleService, IModuleServiceRegistry moduleServiceRegistry)
             : base(logger, chargePointService, vehicleService)
@@ -44,7 +44,7 @@ namespace OpenHomeEnergyManager.Domain.Services.ChargeModesServices
             _logger.LogDebug("CHARGE / Started: {Started} Stopped: {Stopped}", _data.StartedChargingAt, _data.StoppedChargingAt);
 
             ChargePointDataset chargePointData = _chargePointService.GetCurrentData(chargePoint.ModuleId.Value);
-            VehicleDataset vehicleData = _vehicleService.GetCurrentData(vehicle.ModuleId);
+            VehicleDataset vehicleData = _vehicleService.GetCurrentData(vehicle.ModuleId.Value);
 
             bool isCharging = GetIsCharging(chargePoint, vehicle);
             bool isNotCharging = GetIsNotCharging(chargePoint, vehicle);

@@ -14,8 +14,7 @@ namespace OpenHomeEnergyManager.Domain.Services.ChargeModesServices
 {
     public class DirectChargeMode : ChargeModeBase, IChargeMode
     {
-
-        public string UniqueIdentifier => "DIRECT";
+        public ChargeModes ChargeMode => ChargeModes.Direct;
 
         public DirectChargeMode(ILogger<ChargeModeBase> logger, ChargePointService chargePointService, VehicleService vehicleService)
             : base(logger, chargePointService, vehicleService)
@@ -25,7 +24,7 @@ namespace OpenHomeEnergyManager.Domain.Services.ChargeModesServices
         public async Task LoopAsync(ChargePoint chargePoint, Vehicle vehicle)
         {
             ChargePointDataset chargePointData = _chargePointService.GetCurrentData(chargePoint.ModuleId.Value);
-            VehicleDataset vehicleData = _vehicleService.GetCurrentData(vehicle.ModuleId);
+            VehicleDataset vehicleData = _vehicleService.GetCurrentData(vehicle.ModuleId.Value);
 
             bool isCharging = GetIsCharging(chargePoint, vehicle);
             bool isNotCharging = GetIsNotCharging(chargePoint, vehicle);

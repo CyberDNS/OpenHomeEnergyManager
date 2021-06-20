@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -6,51 +7,63 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 using MudBlazor;
 using OpenHomeEnergyManager.Blazor.Components.Dialogs;
-using OpenHomeEnergyManager.Blazor.Infrastructure.HttpClients;
-using OpenHomeEnergyManager.Blazor.Infrastructure.HttpClients.Dtos;
+using OpenHomeEnergyManager.Blazor.Infrastructure.HttpClients.ChargePoints;
+using OpenHomeEnergyManager.Blazor.Infrastructure.HttpClients.ChargePoints.Commands;
+using OpenHomeEnergyManager.Blazor.Infrastructure.HttpClients.ChargePoints.Queries;
+using OpenHomeEnergyManager.Blazor.Infrastructure.HttpClients.Modules.Queries;
 
 namespace OpenHomeEnergyManager.Blazor.Components.ChargePointManagement.Settings
 {
     public partial class ChargePointSettingsCard : ComponentBase
     {
-        [Inject] private ChargePointClient _chargePointClient { get; set; }
+        [Inject] private IDialogService _dialogService { get; set; }
+        [Inject] private ChargePointsClient _chargePointClient { get; set; }
 
-        [Parameter] public ChargePointDto Model { get; set; }
 
-        [Parameter] public EventHandler<ChargePointDto> OnChargePointRemoved { get; set; }
+        [CascadingParameter] public IEnumerable<ModuleDto> Modules { get; set; }
+        [Parameter] public ChargePointDto ChargePoint { get; set; }
+        [Parameter] public EventHandler<ChargePointDto> OnDeleted { get; set; }
 
-        private bool _isNew => Model.Id == default(Int32);
+        private ChargePointSettingsModel _model;
+
+        protected override void OnParametersSet()
+        {
+            _model = new ChargePointSettingsModel()
+            {
+                Name = ChargePoint.Name,
+                ModuleId = ChargePoint.ModuleId,
+                Image = ChargePoint.Image
+            };
+
+            _model.Module = Modules.Where(d => d.Id.Equals(ChargePoint.ModuleId)).SingleOrDefault();
+        }
 
         private async Task OnValidSubmit(EditContext context)
         {
-            if (_isNew)
+            await _chargePointClient.UpdateInformationAsync(ChargePoint.Id, new UpdateInformationDto()
             {
-                int id = (await _chargePointClient.AddAsync(Model)).Id;
-                Model.Id = id;
-            }
-            else
-            {
-                await _chargePointClient.UpdateAsync(Model);
-            }
+                Name = _model.Name,
+                ModuleId = _model.ModuleId
+            });
         }
 
-        private void OnAddCanceled()
+        private void OnModuleChanged(ModuleDto selectedModule)
         {
-            OnChargePointRemoved.Invoke(this, Model);
+            _model.Module = selectedModule;
         }
 
         private async Task OnDelete()
         {
             DialogParameters parameters = new DialogParameters();
-            parameters.Add("DialogMessage", $"Do you want to delete the charge point {Model.Name}?");
+            parameters.Add("DialogMessage", $"Do you want to delete the charge point {ChargePoint.Name}?");
 
-            var dialog = Dialog.Show<ConfirmationDialog>("Please confirm", parameters: parameters);
+            var dialog = _dialogService.Show<ConfirmationDialog>("Please confirm", parameters: parameters);
             var result = await dialog.Result;
 
             if (!result.Cancelled)
             {
-                await _chargePointClient.DeleteAsync(Model);
-                OnChargePointRemoved.Invoke(this, Model);
+                await _chargePointClient.DeleteAsync(ChargePoint.Id);
+                OnDeleted.Invoke(this, ChargePoint);
             }
         }
     }

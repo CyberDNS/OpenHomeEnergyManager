@@ -35,7 +35,7 @@ namespace OpenHomeEnergyManager.Infrastructure.Modules
                 var moduleServiceDefinitionsRepository = scope.ServiceProvider.GetRequiredService<IModuleServiceDefinitionRepository>();
                 var moduleServiceDefinitions = moduleServiceDefinitionsRepository.GetAll().ToDictionary(d => d.Key);
 
-                foreach (var module in modulesRepository.GetAll())
+                foreach (var module in modulesRepository.GetAll().Where(m => m.ModuleServiceDefinitionKey is not null))
                 {
                     var moduleServiceDefinition = moduleServiceDefinitions[module.ModuleServiceDefinitionKey];
                     _serviceRegistry.TryRegister(moduleServiceDefinition.Type, module);

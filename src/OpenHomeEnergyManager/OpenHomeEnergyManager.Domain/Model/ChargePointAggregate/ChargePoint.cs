@@ -1,4 +1,5 @@
 ﻿using OpenHomeEnergyManager.Domain.SeedWork;
+using OpenHomeEnergyManager.Domain.Services.ChargeModesServices;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +10,7 @@ namespace OpenHomeEnergyManager.Domain.Model.ChargePointAggregate
 {
     public class ChargePoint : Entity, IAggregateRoot
     {
-        public string Name { get; private set; }
+        public string Name { get; set; }
 
         public string Image { get; private set; }
 
@@ -17,7 +18,12 @@ namespace OpenHomeEnergyManager.Domain.Model.ChargePointAggregate
 
         public int? VehicleId { get; set; }
 
-        public string CurrentChargeMode { get; set; }
+        public ChargeModes CurrentChargeMode { get; set; }
+
+        public ChargePoint(string name)
+        {
+            Name = name;
+        }
     }
 }
   

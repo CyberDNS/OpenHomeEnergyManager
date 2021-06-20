@@ -1,0 +1,13 @@
+﻿<MudDialog DisableSidePadding="true">
+	<DialogContent>
+		<MudContainer Style="max-height: 300px; width: 100%; overflow-y: scroll">
+			<MudForm @bind-IsValid="@_isValid">
+				<MudTextField @bind-Value="_name" Label="Name" Required="true" Immediate="true" Variant="Variant.Text"></MudTextField>
+			</MudForm>
+		</MudContainer>
+	</DialogContent>
+	<DialogActions>
+		<MudButton OnClick="Cancel">Cancel</MudButton>
+		<MudButton Color="Color.Primary" OnClick="Submit" Disabled="@(!_isValid)">Ok</MudButton>
+	</DialogActions>
+</MudDialog>

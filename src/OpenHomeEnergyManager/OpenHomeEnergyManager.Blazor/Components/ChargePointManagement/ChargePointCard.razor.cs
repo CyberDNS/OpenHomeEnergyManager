@@ -1,30 +1,33 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Timers;
 using Microsoft.AspNetCore.Components;
-using OpenHomeEnergyManager.Blazor.Infrastructure.HttpClients;
-using OpenHomeEnergyManager.Blazor.Infrastructure.HttpClients.Dtos;
+using OpenHomeEnergyManager.Blazor.Infrastructure.HttpClients.ChargePoints;
+using OpenHomeEnergyManager.Blazor.Infrastructure.HttpClients.ChargePoints.Commands;
+using OpenHomeEnergyManager.Blazor.Infrastructure.HttpClients.ChargePoints.Queries;
+using OpenHomeEnergyManager.Blazor.Infrastructure.HttpClients.ChargePoints.Shared;
 
 namespace OpenHomeEnergyManager.Blazor.Components.ChargePointManagement
 {
-    public partial class ChargePointCard : ComponentBase
+    public partial class ChargePointCard : ComponentBase, IDisposable
     {
 		[Parameter] public ChargePointDto ChargePoint { get; set; }
 
-		[Inject] private ChargePointClient _chargePointClient { get; set; }
+		[Inject] private ChargePointsClient _chargePointClient { get; set; }
 
 		public int Power { get; set; }
 		public int Current { get; set; }
 		public int PhaseCount { get; set; }
 
+		private Timer _timer;
+
 		protected override void OnInitialized()
 		{
-			Timer timer = new Timer();
-			timer.Interval = TimeSpan.FromSeconds(5).TotalMilliseconds;
-			timer.Elapsed += TimerElapsed;
-			timer.Enabled = true;
+			Timer _timer = new Timer();
+			_timer.Interval = TimeSpan.FromSeconds(5).TotalMilliseconds;
+			_timer.Elapsed += TimerElapsed;
+			_timer.Enabled = true;
 		}
 
 		private void TimerElapsed(object sender, ElapsedEventArgs e)
@@ -42,9 +45,9 @@ namespace OpenHomeEnergyManager.Blazor.Components.ChargePointManagement
 			StateHasChanged();
 		}
 
-		private async Task SetChargeMode(string chargeMode)
+		private async Task SetChargeMode(ChargeModesDto chargeMode)
 		{
-			await _chargePointClient.SetChargeModeAsync(ChargePoint.Id, chargeMode);
+			await _chargePointClient.SelectChargeModeAsync(ChargePoint.Id, new SelectChargeModeDto() { ChargeMode = chargeMode });
 			var chargePoints = await _chargePointClient.GetAllAsync();
 
 			ChargePoint = chargePoints.Single(c => c.Id == ChargePoint.Id);
@@ -52,11 +55,20 @@ namespace OpenHomeEnergyManager.Blazor.Components.ChargePointManagement
 			StateHasChanged();
 		}
 
-		private bool IsCurrentChargeMode(string chargeMode)
+		private bool IsCurrentChargeMode(ChargeModesDto chargeMode)
 		{
 			if (ChargePoint?.CurrentChargeMode is null) { return false; }
 
-			return ChargePoint.CurrentChargeMode.Equals(chargeMode, StringComparison.OrdinalIgnoreCase);
+			return ChargePoint.CurrentChargeMode == chargeMode;
 		}
-	}
+
+        public void Dispose()
+        {
+            if (_timer is not null)
+            {
+				_timer.Stop();
+				_timer = null;
+            }
+        }
+    }
 }

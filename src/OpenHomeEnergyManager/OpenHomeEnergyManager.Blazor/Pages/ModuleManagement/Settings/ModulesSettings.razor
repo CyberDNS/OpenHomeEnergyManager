@@ -9,14 +9,16 @@
     }
     else
     {
+        <CascadingValue Value="_moduleServiceDefinitions">
         <MudGrid Justify="Justify.Center">
             @foreach (var module in _modules)
             {
-                <MudItem xs="12" md="6" lg="3">
-                    <ModuleSettingsCard Model="module" OnModuleRemoved="OnModuleRemoved" />
+                <MudItem xs="12" md="6">
+                    <ModuleSettingsCard Module="module" OnDeleted="OnModuleDeleted" />
                 </MudItem>
             }
         </MudGrid>
+        </CascadingValue>
     }
 </MudContainer>
 

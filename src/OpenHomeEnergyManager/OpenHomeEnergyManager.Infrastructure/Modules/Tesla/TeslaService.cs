@@ -58,11 +58,16 @@ namespace OpenHomeEnergyManager.Infrastructure.Modules.Tesla
 
         private async void DoWork(object state)
         {
-            var chargeState = await _teslaClient.GetChargeState();
-            if (chargeState is not null)
+            var vehicle = await _teslaClient.GetVehicle();
+
+            if (vehicle.Response.State.Equals("online", StringComparison.OrdinalIgnoreCase))
             {
-                GetCapability<StateOfChargeCapability>("SOC").Value = Convert.ToDecimal(chargeState.Response.BatteryLevel, CultureInfo.InvariantCulture.NumberFormat);
-                GetCapability<IsChargingCapability>("IS_CHARGING").Value = chargeState.Response.ChargingState.Equals("Charging", StringComparison.OrdinalIgnoreCase);
+                var chargeState = await _teslaClient.GetChargeState();
+                if (chargeState is not null)
+                {
+                    GetCapability<StateOfChargeCapability>("SOC").Value = Convert.ToDecimal(chargeState.Response.BatteryLevel, CultureInfo.InvariantCulture.NumberFormat);
+                    GetCapability<IsChargingCapability>("IS_CHARGING").Value = chargeState.Response.ChargingState.Equals("Charging", StringComparison.OrdinalIgnoreCase);
+                }
             }
         }
 

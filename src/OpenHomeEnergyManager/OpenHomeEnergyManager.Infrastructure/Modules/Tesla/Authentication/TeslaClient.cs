@@ -38,6 +38,16 @@ namespace OpenHomeEnergyManager.Infrastructure.Modules.Tesla.Authentication
             return dto;
         }
 
+        public async Task<VehicleDto> GetVehicle()
+        {
+            string query = "vehicles/151458224580";
+            var response = await _httpClient.GetAsync(query);
+            response.EnsureSuccessStatusCode();
+
+            var dto = await response.Content.ReadFromJsonAsync<VehicleDto>();
+            return dto;
+        }
+
         public async Task WakeUp()
         {
             string query = "vehicles/151458224580/wake_up";

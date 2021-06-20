@@ -9,12 +9,17 @@ namespace OpenHomeEnergyManager.Domain.Model.VehicleAggregate
 {
     public class Vehicle : Entity, IAggregateRoot
     {
-        public string Name { get; private set; }
+        public string Name { get; set; }
 
         public string Image { get; private set; }
 
-        public int ModuleId { get; set; }
+        public int? ModuleId { get; set; }
 
         public bool ChargerMustBeOffOnChanges { get; set; }
+
+        public Vehicle(string name)
+        {
+            Name = name;
+        }
     }
 }

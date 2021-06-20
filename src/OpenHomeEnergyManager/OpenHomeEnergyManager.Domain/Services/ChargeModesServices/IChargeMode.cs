@@ -12,7 +12,7 @@ namespace OpenHomeEnergyManager.Domain.Services.ChargeModesServices
 {
     public interface IChargeMode
     {
-        public string UniqueIdentifier { get; }
+        public ChargeModes ChargeMode { get; }
 
         public Task LoopAsync(ChargePoint chargePoint, Vehicle vehicle);
     }

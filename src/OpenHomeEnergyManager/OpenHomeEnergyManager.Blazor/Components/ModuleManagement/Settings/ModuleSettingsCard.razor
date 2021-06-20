@@ -1,4 +1,6 @@
-﻿@if (_moduleServiceDefinitions == null)
+﻿@using OpenHomeEnergyManager.Blazor.Infrastructure.HttpClients.ModuleServiceDefinitions.Queries
+
+@if (_model is null)
 {
 	<MudGrid Justify="Justify.Center">
 	 <MudProgressCircular Color="Color.Primary" Style="height:70px;width:70px;" Indeterminate="true" />
@@ -6,40 +8,31 @@
 }
 else
 {
-
-	<EditForm Model="@Model" OnValidSubmit="OnValidSubmit">
+	<EditForm Model="@_model" OnValidSubmit="OnValidSubmit">
 	 <DataAnnotationsValidator />
 	 <MudCard>
 	  <MudCardContent>
-	   <MudSelect T="ModuleServiceDefinitionDto" Value="@Model.ModuleServiceDefinition" ValueChanged="@OnModuleServiceDefinitionChanged" Label="Type">
-					@foreach (var definition in _moduleServiceDefinitions)
+	   <MudSelect T="ModuleServiceDefinitionDto" Value="@_model.ModuleServiceDefinition" ValueChanged="@OnModuleServiceDefinitionChanged" Label="Type">
+					@foreach (var definition in ModuleServiceDefinitions)
 					{
 			<MudSelectItem Value="definition">@definition.Name</MudSelectItem>
 					}
 	   </MudSelect>
-	   <MudTextField Label="Name" @bind-Value="Model.Name" For="@(() => Model.Name)" Variant="Variant.Text" />
-				@if (Model.ModuleServiceDefinition is not null)
+	   <MudTextField Label="Name" @bind-Value="_model.Name" For="@(() => _model.Name)" Variant="Variant.Text" />
+				@if (_model.ModuleServiceDefinition is not null)
 				{
-					foreach (var setting in Model.ModuleServiceDefinition.Settings)
+					foreach (var setting in _model.ModuleServiceDefinition.Settings)
 					{
 						if (setting.Value.Equals("text", StringComparison.OrdinalIgnoreCase))
 						{
-				   <MudTextField T="string" @bind-Value="Model.Settings[setting.Key]" Label="@setting.Key" Variant="Variant.Text" />
+				   <MudTextField T="string" @bind-Value="_model.Settings[setting.Key]" Label="@setting.Key" Variant="Variant.Text" />
 						}
 					}
 				}
 	  </MudCardContent>
 	  <MudCardActions Class="d-flex justify-end py-2 px-1 mt-6">
-				@if (_isNew)
-				{
-		   <MudButton Variant="Variant.Filled" Color="Color.Warning" Class="pa-2 mx-2" OnClick="OnAddCanceled">Cancel</MudButton>
-		   <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Class="pa-2 mx-2">Save</MudButton>
-				}
-				else
-				{
-		   <MudButton Variant="Variant.Filled" Color="Color.Error" Class="pa-2 mx-2" OnClick="OnDelete">Delete</MudButton>
-		   <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Info" Class="pa-2 mx-2">Apply</MudButton>
-				}
+	   <MudButton Variant="Variant.Filled" Color="Color.Error" Class="pa-2 mx-2" OnClick="OnDelete">Delete</MudButton>
+	   <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Info" Class="pa-2 mx-2">Apply</MudButton>
 	  </MudCardActions>
 	 </MudCard>
 	</EditForm>

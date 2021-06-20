@@ -39,15 +39,15 @@ namespace OpenHomeEnergyManager.Domain.Services.ChargeModesServices
             }
         }
 
-        private IChargeMode GetChargeMode(string uniqueIdentifier)
+        private IChargeMode GetChargeMode(ChargeModes chargeMode)
         {
-            switch (uniqueIdentifier)
+            switch (chargeMode)
             {
-                case "STOP":
+                case ChargeModes.Stop:
                     return _serviceProvider.GetRequiredService<StopChargeMode>();
-                case "DIRECT":
+                case ChargeModes.Direct:
                     return _serviceProvider.GetRequiredService<DirectChargeMode>();
-                case "EXCESS":
+                case ChargeModes.Excess:
                     return _serviceProvider.GetRequiredService<ExcessChargeMode>();
                 default:
                     return null;

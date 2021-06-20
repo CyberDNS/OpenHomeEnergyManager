@@ -7,6 +7,10 @@ using Microsoft.Extensions.Hosting;
 using MudBlazor;
 using MudBlazor.Services;
 using OpenHomeEnergyManager.Blazor.Infrastructure.HttpClients;
+using OpenHomeEnergyManager.Blazor.Infrastructure.HttpClients.ChargePoints;
+using OpenHomeEnergyManager.Blazor.Infrastructure.HttpClients.Modules;
+using OpenHomeEnergyManager.Blazor.Infrastructure.HttpClients.ModuleServiceDefinitions;
+using OpenHomeEnergyManager.Blazor.Infrastructure.HttpClients.Vehicles;
 using OpenHomeEnergyManager.Blazor.Infrastructure.Mqtt.Extensions;
 using System;
 using System.Collections.Generic;
@@ -31,9 +35,10 @@ namespace OpenHomeEnergyManager.Blazor
 
             services.AddMudServices();
 
-            services.AddHttpClient<ChargePointClient>(o => o.BaseAddress = new Uri($"{Configuration.GetValue<string>("HttpClients:Uris:OpenHomeEnergyManagerApi")}ChargePoints/"));
-            services.AddHttpClient<ModuleServiceDefinitionClient>(o => o.BaseAddress = new Uri($"{Configuration.GetValue<string>("HttpClients:Uris:OpenHomeEnergyManagerApi")}ModuleServiceDefinitions/"));
-            services.AddHttpClient<ModuleClient>(o => o.BaseAddress = new Uri($"{Configuration.GetValue<string>("HttpClients:Uris:OpenHomeEnergyManagerApi")}Modules/"));
+            services.AddHttpClient<ModulesClient>(o => o.BaseAddress = new Uri($"{Configuration.GetValue<string>("HttpClients:Uris:OpenHomeEnergyManagerApi")}Modules/"));
+            services.AddHttpClient<ChargePointsClient>(o => o.BaseAddress = new Uri($"{Configuration.GetValue<string>("HttpClients:Uris:OpenHomeEnergyManagerApi")}ChargePoints/"));
+            services.AddHttpClient<VehiclesClient>(o => o.BaseAddress = new Uri($"{Configuration.GetValue<string>("HttpClients:Uris:OpenHomeEnergyManagerApi")}Vehicles/"));
+            services.AddHttpClient<ModuleServiceDefinitionsClient>(o => o.BaseAddress = new Uri($"{Configuration.GetValue<string>("HttpClients:Uris:OpenHomeEnergyManagerApi")}ModuleServiceDefinitions/"));
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

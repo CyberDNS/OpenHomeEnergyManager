@@ -26,7 +26,7 @@ namespace OpenHomeEnergyManager.Domain.Services.ChargeModesServices
         protected bool GetIsCharging(ChargePoint chargePoint, Vehicle vehicle)
         {
             bool chargePointIsCharging = _chargePointService.GetCurrentData(chargePoint.ModuleId.Value).IsCharging;
-            bool vehicleIsCharging = _vehicleService.GetCurrentData(vehicle.ModuleId).IsCharging;
+            bool vehicleIsCharging = _vehicleService.GetCurrentData(vehicle.ModuleId.Value).IsCharging;
 
             _logger.LogInformation("IsCharging: CP: {chargePointIsCharging} V: {vehicleIsCharging}", chargePointIsCharging, vehicleIsCharging);
 
@@ -36,7 +36,7 @@ namespace OpenHomeEnergyManager.Domain.Services.ChargeModesServices
         protected bool GetIsNotCharging(ChargePoint chargePoint, Vehicle vehicle)
         {
             bool chargePointIsCharging = _chargePointService.GetCurrentData(chargePoint.ModuleId.Value).IsCharging;
-            bool vehicleIsCharging = _vehicleService.GetCurrentData(vehicle.ModuleId).IsCharging;
+            bool vehicleIsCharging = _vehicleService.GetCurrentData(vehicle.ModuleId.Value).IsCharging;
 
             _logger.LogInformation("IsNotCharging: CP: {chargePointIsCharging} V: {vehicleIsCharging}", chargePointIsCharging, vehicleIsCharging);
 
@@ -59,7 +59,7 @@ namespace OpenHomeEnergyManager.Domain.Services.ChargeModesServices
             _chargePointService.SetCurrent(chargePoint.ModuleId.Value, 7);
             _chargePointService.SetPhaseCount(chargePoint.ModuleId.Value, phases);
 
-            _vehicleService.SetIsCharging(vehicle.ModuleId, true);
+            _vehicleService.SetIsCharging(vehicle.ModuleId.Value, true);
             await Task.Delay(TimeSpan.FromSeconds(5));
 
             var result = Policy.HandleResult<bool>(b => b)
@@ -79,7 +79,7 @@ namespace OpenHomeEnergyManager.Domain.Services.ChargeModesServices
 
         protected async Task StopCharging(ChargePoint chargePoint, Vehicle vehicle)
         {
-            _vehicleService.SetIsCharging(vehicle.ModuleId, false);
+            _vehicleService.SetIsCharging(vehicle.ModuleId.Value, false);
             await Task.Delay(TimeSpan.FromSeconds(5));
 
             var result = Policy.HandleResult<bool>(b => b)

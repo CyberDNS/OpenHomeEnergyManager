@@ -19,14 +19,14 @@ namespace OpenHomeEnergyManager.Domain.Services.ChargeModesServices
         {
         }
 
-        public string UniqueIdentifier => "STOP";
+        public ChargeModes ChargeMode => ChargeModes.Stop;
 
 
 
         public async Task LoopAsync(ChargePoint chargePoint, Vehicle vehicle)
         {
             ChargePointDataset chargePointData = _chargePointService.GetCurrentData(chargePoint.ModuleId.Value);
-            VehicleDataset vehicleData = _vehicleService.GetCurrentData(vehicle.ModuleId);
+            VehicleDataset vehicleData = _vehicleService.GetCurrentData(vehicle.ModuleId.Value);
 
             bool isCharging = GetIsCharging(chargePoint, vehicle);
             bool isNotCharging = GetIsNotCharging(chargePoint, vehicle);

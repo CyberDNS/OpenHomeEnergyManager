@@ -1,23 +1,25 @@
 ﻿@page "/settings/charge-point-management/charge-points"
 
 <MudContainer MaxWidth="MaxWidth.ExtraLarge" Class="mt-6">
-    @if (_chargePoints == null)
-    {
-        <MudGrid Justify="Justify.Center">
-            <MudProgressCircular Color="Color.Primary" Style="height:70px;width:70px;" Indeterminate="true" />
-        </MudGrid>
-    }
-    else
-    {
-        <MudGrid Justify="Justify.Center">
-            @foreach (var chargePoint in _chargePoints)
-            {
-                <MudItem xs="12" md="6" lg="3">
-                    <ChargePointSettingsCard Model="chargePoint" OnChargePointRemoved="OnChargePointRemoved" />
-                </MudItem>
-            }
-        </MudGrid>
-    }
+	@if (_chargePoints == null)
+	{
+	 <MudGrid Justify="Justify.Center">
+	  <MudProgressCircular Color="Color.Primary" Style="height:70px;width:70px;" Indeterminate="true" />
+	 </MudGrid>
+	}
+	else
+	{
+	 <CascadingValue Value="_modules">
+	  <MudGrid Justify="Justify.Center">
+				@foreach (var chargePoint in _chargePoints)
+			{
+	   <MudItem xs="12" md="6">
+		<ChargePointSettingsCard ChargePoint="chargePoint" OnDeleted="OnChargePointDeleted" />
+	   </MudItem>
+			}
+  </MudGrid>
+ </CascadingValue>
+	}
 </MudContainer>
 
 <MudFab Color="Color.Primary" Icon="@Icons.Filled.Add" Class="fab-button-bottom-right" OnClick="AddChargePoint" />

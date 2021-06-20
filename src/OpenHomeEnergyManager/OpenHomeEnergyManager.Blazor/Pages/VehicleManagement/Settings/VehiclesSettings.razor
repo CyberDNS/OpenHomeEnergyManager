@@ -1,0 +1,25 @@
+﻿@page "/settings/vehicle-management/vehicles"
+
+<MudContainer MaxWidth="MaxWidth.ExtraLarge" Class="mt-6">
+    @if (_vehicles == null)
+    {
+        <MudGrid Justify="Justify.Center">
+            <MudProgressCircular Color="Color.Primary" Style="height:70px;width:70px;" Indeterminate="true" />
+        </MudGrid>
+    }
+    else
+    {
+        <CascadingValue Value="_modules">
+            <MudGrid Justify="Justify.Center">
+                @foreach (var vehicle in _vehicles)
+                {
+                    <MudItem xs="12" md="6">
+                        <VehicleSettingsCard Vehicle="vehicle" OnDeleted="OnVehicleDeleted" />
+                    </MudItem>
+                }
+            </MudGrid>
+        </CascadingValue>
+    }
+</MudContainer>
+
+<MudFab Color="Color.Primary" Icon="@Icons.Filled.Add" Class="fab-button-bottom-right" OnClick="AddVehicle" />
