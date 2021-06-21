@@ -1,43 +1,58 @@
 ﻿@using OpenHomeEnergyManager.Blazor.Infrastructure.HttpClients.ChargePoints.Shared
 
 <MudCard>
-    <div style="position:relative">
-        <MudCardMedia Image="@($"api/Images/{ChargePoint.Image}")" Height="450" />
-        @if ((_vehicle is not null) && (_vehicle.Image is not null))
-        {
-            <MudPaper Elevation="3" Class="ma-2" Style="position: absolute; right: 10px; bottom: 10px; height: 100px; width: 150px; overflow: hidden" @onclick="AttributeVehicle">
-                <MudElement HtmlTag="img" src="@($"api/Images/{_vehicle.Image}")" Style="height: 100px; margin-left: 50%; transform: translateX(-50%); " />
-            </MudPaper>
-        }
-        else
-        {
-            <MudPaper Elevation="3" Class="ma-2 d-flex justify-center align-center" Style="position: absolute; right: 10px; bottom: 10px; height: 100px; width: 150px;" @onclick="AttributeVehicle">
-                @if (_vehicle is not null)
-                {
-                    <MudText Typo="Typo.body2">@_vehicle.Name</MudText>
-                }
-                else
-                {
-                    <MudIcon Icon="@Icons.Material.Filled.Block" Color="Color.Default" Size="Size.Large" />
-                }
-            </MudPaper>
-        }
-    </div>
-    <MudCardContent>
-        <MudText>@ChargePoint.Name</MudText>
-        <MudGrid>
-            <MudItem>
-                <MudText Typo="Typo.button">@Power W</MudText> / <MudText Typo="Typo.caption">@(PhaseCount)x</MudText> <MudText Typo="Typo.button">@Current A</MudText>
-            </MudItem>
-        </MudGrid>
-    </MudCardContent>
-    <MudCardActions>
-        <MudGrid>
-            <MudItem>
-                <MudButton Variant="@(IsCurrentChargeMode(ChargeModesDto.Direct) ? Variant.Filled : Variant.Outlined)" Color="Color.Primary" OnClick="@(() => SetChargeMode(ChargeModesDto.Direct))">Direct</MudButton>
-                <MudButton Variant="@(IsCurrentChargeMode(ChargeModesDto.Excess) ? Variant.Filled : Variant.Outlined)" Color="Color.Tertiary" OnClick="@(() => SetChargeMode(ChargeModesDto.Excess))">Excess</MudButton>
-                <MudButton Variant="@(IsCurrentChargeMode(ChargeModesDto.Stop) ? Variant.Filled : Variant.Outlined)" Color="Color.Error" OnClick="@(() => SetChargeMode(ChargeModesDto.Stop))">Stop</MudButton>
-            </MudItem>
-        </MudGrid>
-    </MudCardActions>
+	<div style="position:relative">
+		<MudCardMedia Image="@($"api/Images/{ChargePoint.Image}")" Height="450" />
+		@if ((_vehicle is not null) && (_vehicle.Image is not null))
+		{
+	  <MudPaper Elevation="3" Class="ma-2" Style="position: absolute; right: 10px; bottom: 10px; height: 100px; width: 150px; overflow: hidden" @onclick="AttributeVehicle">
+	   <MudElement HtmlTag="img" src="@($"api/Images/{_vehicle.Image}")" Style="height: 100px; margin-left: 50%; transform: translateX(-50%); " />
+	  </MudPaper>
+		}
+		else
+		{
+	  <MudPaper Elevation="3" Class="ma-2 d-flex justify-center align-center" Style="position: absolute; right: 10px; bottom: 10px; height: 100px; width: 150px;" @onclick="AttributeVehicle">
+				@if (_vehicle is not null)
+				{
+		   <MudText Typo="Typo.body2">@_vehicle.Name</MudText>
+				}
+				else
+				{
+		   <MudIcon Icon="@Icons.Material.Filled.Block" Color="Color.Default" Size="Size.Large" />
+				}
+	  </MudPaper>
+		}
+ </div>
+ <MudCardContent>
+  <MudText Typo="Typo.h6">@ChargePoint.Name</MudText>
+		@if (_vehicleNow is not null)
+		{
+	  <MudContainer Class="px-0 mt-3 d-flex justify-space-between">
+	   <MudBadge Content="@("A")" Color="Color.Secondary" Overlap="true">
+		<MudChip Label="true" Color="Color.Dark" Variant="Variant.Outlined" Style="min-width: 75px;">
+		 <MudText Typo="Typo.caption">@(PhaseCount)x</MudText> <MudText Typo="Typo.button">@Current</MudText>
+		</MudChip>
+	   </MudBadge>
+	   <MudBadge Content="@("W")" Color="Color.Secondary" Overlap="true">
+		<MudChip Label="true" Color="Color.Dark" Variant="Variant.Outlined" Style="min-width: 75px;">
+		 <MudText Typo="Typo.button">@Power</MudText>
+		</MudChip>
+	   </MudBadge>
+	   <MudBadge Content="@("%")" Color="Color.Secondary" Overlap="true">
+		<MudChip Label="true" Color="Color.Dark" Variant="Variant.Outlined" Style="min-width: 75px;">
+		 <MudText Typo="Typo.button">@_vehicleNow.StateOfCharge / @_vehicleNow.ChargeLimit</MudText>
+		</MudChip>
+	   </MudBadge>
+	  </MudContainer>
+		}
+ </MudCardContent>
+ <MudCardActions>
+  <MudGrid>
+   <MudItem>
+	<MudButton Variant="@(IsCurrentChargeMode(ChargeModesDto.Direct) ? Variant.Filled : Variant.Outlined)" Color="Color.Primary" OnClick="@(() => SetChargeMode(ChargeModesDto.Direct))">Direct</MudButton>
+	<MudButton Variant="@(IsCurrentChargeMode(ChargeModesDto.Excess) ? Variant.Filled : Variant.Outlined)" Color="Color.Tertiary" OnClick="@(() => SetChargeMode(ChargeModesDto.Excess))">Excess</MudButton>
+	<MudButton Variant="@(IsCurrentChargeMode(ChargeModesDto.Stop) ? Variant.Filled : Variant.Outlined)" Color="Color.Error" OnClick="@(() => SetChargeMode(ChargeModesDto.Stop))">Stop</MudButton>
+   </MudItem>
+  </MudGrid>
+ </MudCardActions>
 </MudCard>

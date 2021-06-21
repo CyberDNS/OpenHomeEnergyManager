@@ -8,7 +8,9 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using OpenHomeEnergyManager.Api.Controllers.V1.Vehicles.Commands;
 using OpenHomeEnergyManager.Api.Controllers.V1.Vehicles.Queries;
+using OpenHomeEnergyManager.Domain.Model.ChargePointAggregate;
 using OpenHomeEnergyManager.Domain.Model.VehicleAggregate;
+using OpenHomeEnergyManager.Domain.Services.ChargePointServices;
 using OpenHomeEnergyManager.Domain.Services.VehicleServices;
 
 namespace OpenHomeEnergyManager.Api.Controllers.V1.Vehicles
@@ -58,6 +60,17 @@ namespace OpenHomeEnergyManager.Api.Controllers.V1.Vehicles
             if (filenameWithExtension is null) { return null; }
 
             return $"{Path.GetFileName(filenameWithExtension)}?{random.Next(0, 100000)}";
+        }
+
+        [HttpGet("{id}/Data/Now")]
+        public async Task<IActionResult> GetNowData(int id)
+        {
+            Vehicle vehicle = await _vehicleRepository.FindByIdAsync(id);
+
+            if (vehicle is null || !vehicle.ModuleId.HasValue || vehicle.ModuleId < 1) { return NotFound(); }
+            var current = _mapper.Map<VehicleDatasetDto>(_vehicleService.GetCurrentData(vehicle.ModuleId.Value));
+
+            return Ok(current);
         }
 
         [HttpPost]

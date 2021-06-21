@@ -21,7 +21,6 @@ namespace OpenHomeEnergyManager.Blazor.Components.ChargePointManagement
 		[Inject] private IDialogService _dialogService { get; set; }
 		[Inject] private ChargePointsClient _chargePointClient { get; set; }
 		[Inject] private VehiclesClient _vehiclesClient { get; set; }
-		[Inject] private ImagesClient _imagesClient { get; set; }
 
 		[Parameter] public ChargePointDto ChargePoint { get; set; }
 
@@ -29,6 +28,8 @@ namespace OpenHomeEnergyManager.Blazor.Components.ChargePointManagement
 		public int Power { get; set; }
 		public int Current { get; set; }
 		public int PhaseCount { get; set; }
+
+		private VehicleDatasetDto _vehicleNow { get; set; }
 
 		private Timer _timer;
 
@@ -70,6 +71,16 @@ namespace OpenHomeEnergyManager.Blazor.Components.ChargePointManagement
 			Power = currentData.Power;
 			Current = Convert.ToInt32(Math.Round(currentData.CurrentPhase1, 0));
 			PhaseCount = currentData.PhaseCount;
+
+			if (_vehicle is not null)
+			{
+				_vehicleNow = await _vehiclesClient.GetNowDataAsync(_vehicle.Id);
+			}
+			else
+            {
+				_vehicleNow = null;
+
+			}
 
 			StateHasChanged();
 		}
