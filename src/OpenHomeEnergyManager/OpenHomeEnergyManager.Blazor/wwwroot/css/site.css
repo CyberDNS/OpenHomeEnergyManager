@@ -11,7 +11,7 @@
 }
 
 .mudblazor-appbar-band {
-    background-image: url(img/AppbarCorner.svg);
+    background-image: url(/img/AppbarCorner.svg);
     background-repeat: no-repeat;
     background-position: top right;
     overflow: hidden;

@@ -49,7 +49,7 @@
  <MudCardActions>
   <MudGrid>
    <MudItem>
-	<MudButton Variant="@(IsCurrentChargeMode(ChargeModesDto.Direct) ? Variant.Filled : Variant.Outlined)" Color="Color.Primary" OnClick="@(() => SetChargeMode(ChargeModesDto.Direct))">Direct</MudButton>
+	<MudButton Variant="@(IsCurrentChargeMode(ChargeModesDto.Direct) ? Variant.Filled : Variant.Outlined)" Color="Color.Secondary" OnClick="@(() => SetChargeMode(ChargeModesDto.Direct))">Direct</MudButton>
 	<MudButton Variant="@(IsCurrentChargeMode(ChargeModesDto.Excess) ? Variant.Filled : Variant.Outlined)" Color="Color.Tertiary" OnClick="@(() => SetChargeMode(ChargeModesDto.Excess))">Excess</MudButton>
 	<MudButton Variant="@(IsCurrentChargeMode(ChargeModesDto.Stop) ? Variant.Filled : Variant.Outlined)" Color="Color.Error" OnClick="@(() => SetChargeMode(ChargeModesDto.Stop))">Stop</MudButton>
    </MudItem>

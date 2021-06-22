@@ -12,6 +12,11 @@ namespace OpenHomeEnergyManager.Blazor.Theme
         {
             Palette = new Palette()
             {
+                AppbarBackground = Colors.DeepOrange.Default,
+                Primary = Colors.DeepOrange.Default,
+                Secondary = Colors.Blue.Default,
+                TextPrimary = Colors.Grey.Darken2,
+                TextSecondary = Colors.Grey.Darken4
             };
         }
     }

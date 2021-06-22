@@ -10,13 +10,13 @@
         <MudAppBarSpacer />
         <MudIconButton Icon="@Icons.Filled.Settings" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => _settingsMenuOpen = !_settingsMenuOpen)" />
     </MudAppBar>
-    <MudDrawer @bind-Open="_navMenuOpen" Elevation="6">
-        <MudDrawerHeader Class="mudblazor-appbar-band">
+    <MudDrawer @bind-Open="_navMenuOpen" Elevation="6" Class="mudblazor-appbar-band">
+        <MudDrawerHeader>
             <img src="img/logo.svg" class="logo" />
         </MudDrawerHeader>
         <NavMenu />
     </MudDrawer>
-    <MudDrawer @bind-Open="_settingsMenuOpen" Anchor="Anchor.Right" Clipped="true" Elevation="1">
+    <MudDrawer @bind-Open="_settingsMenuOpen" Anchor="Anchor.Right" Clipped="true" Elevation="1" Variant="DrawerVariant.Temporary">
         <SettingsMenu />
     </MudDrawer>
     <MudMainContent>
