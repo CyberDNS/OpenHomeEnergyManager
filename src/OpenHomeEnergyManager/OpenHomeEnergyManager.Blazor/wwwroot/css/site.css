@@ -16,3 +16,23 @@
     background-position: top right;
     overflow: hidden;
 }
+
+.small-power-chart {
+    
+}
+
+    .small-power-chart .mud-charts-yaxis {
+        display: none;
+    }
+
+    .small-power-chart .mud-charts-xaxis {
+        display: none;
+    }
+
+    .small-power-chart .mud-charts-grid {
+        display: none;
+    }
+
+    .small-power-chart .mud-chart-line {
+        stroke-width: 10;
+    }

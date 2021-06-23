@@ -28,6 +28,8 @@ namespace OpenHomeEnergyManager.Domain.Services.ChargeModesServices
             bool chargePointIsCharging = _chargePointService.GetCurrentData(chargePoint.ModuleId.Value).IsCharging;
             bool vehicleIsCharging = _vehicleService.GetCurrentData(vehicle.ModuleId.Value).IsCharging;
 
+            _vehicleService.SetIsConnectedWallboxCharging(vehicle.ModuleId.Value, chargePointIsCharging);
+
             _logger.LogInformation("IsCharging: CP: {chargePointIsCharging} V: {vehicleIsCharging}", chargePointIsCharging, vehicleIsCharging);
 
             return chargePointIsCharging && vehicleIsCharging;

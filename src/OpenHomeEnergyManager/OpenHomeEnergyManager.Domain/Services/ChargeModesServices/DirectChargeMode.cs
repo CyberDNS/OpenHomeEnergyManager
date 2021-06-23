@@ -14,6 +14,8 @@ namespace OpenHomeEnergyManager.Domain.Services.ChargeModesServices
 {
     public class DirectChargeMode : ChargeModeBase, IChargeMode
     {
+        private DirectChargeModeData _data = new DirectChargeModeData();
+
         public ChargeModes ChargeMode => ChargeModes.Direct;
 
         public DirectChargeMode(ILogger<ChargeModeBase> logger, ChargePointService chargePointService, VehicleService vehicleService)
@@ -31,18 +33,20 @@ namespace OpenHomeEnergyManager.Domain.Services.ChargeModesServices
 
             if (isCharging == isNotCharging) { _logger.LogWarning("Inconsistent charging state"); }
 
-            bool chargePointIsCharging = _chargePointService.GetCurrentData(chargePoint.ModuleId.Value).IsCharging;
-
-            if (!chargePointIsCharging)
+            if (isNotCharging)
             {
                 _logger.LogInformation("Starting charge...");
                 await StartCharging(chargePoint, vehicle, phases: 3);
+                _data.StartedChargingAt = DateTime.UtcNow;
                 _logger.LogInformation("Started!");
             }
 
-            if (chargePointData.PhaseCount != 3)
+            if (DateTime.UtcNow - _data.StartedChargingAt > TimeSpan.FromMinutes(1))
             {
-                await SetPhases(chargePoint, vehicle, phases: 3);
+                if (chargePointData.PhaseCount != 3)
+                {
+                    await SetPhases(chargePoint, vehicle, phases: 3);
+                }
             }
 
             if (Math.Round(chargePointData.CurrentPhase1, 0) < 16)

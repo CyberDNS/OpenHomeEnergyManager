@@ -21,6 +21,9 @@ namespace OpenHomeEnergyManager.Infrastructure.Modules.Tesla
         private readonly TeslaClient _teslaClient;
         private string _email;
         private string _password;
+        private string _vehicleId;
+
+        private bool _connectedWallboxIsCharging = false;
 
         private TokenMaterial _tokenMaterial;
 
@@ -36,12 +39,15 @@ namespace OpenHomeEnergyManager.Infrastructure.Modules.Tesla
             RegisterCapability(new IsChargedToChargeLimitCapability("IS_CHARGED_TO_CHARGE_LIMIT", "Is charged-up to the limit"));
 
             RegisterCapability(new SetIsChargingCapability("SET_IS_CHARGING", "Set Is Charging", SetIsCharging));
+
+            RegisterCapability(new SetIsChargingCapability("SET_CONNECTED_WALLBOX_IS_CHARGING", "Set connected Wallbox is charging", SetConnectedWallboxIsCharging));
         }
 
         public override void Configure(IDictionary<string, string> settings)
         {
             _email = GetSetting(settings, "E-Mail");
             _password = GetSetting(settings, "Password");
+            _vehicleId = GetSetting(settings, "Vehicle ID");
         }
 
         private string GetSetting(IDictionary<string, string> settings, string key)
@@ -61,11 +67,13 @@ namespace OpenHomeEnergyManager.Infrastructure.Modules.Tesla
 
         private async void DoWork(object state)
         {
-            var vehicle = await _teslaClient.GetVehicle();
+            if (!_connectedWallboxIsCharging) { return; }
+
+            var vehicle = await _teslaClient.GetVehicle(_vehicleId);
 
             if (vehicle.Response.State.Equals("online", StringComparison.OrdinalIgnoreCase))
             {
-                var chargeState = await _teslaClient.GetChargeState();
+                var chargeState = await _teslaClient.GetChargeState(_vehicleId);
                 if (chargeState is not null)
                 {
                     GetCapability<StateOfChargeCapability>("SOC").Value = Convert.ToDecimal(chargeState.Response.BatteryLevel, CultureInfo.InvariantCulture.NumberFormat);
@@ -81,13 +89,18 @@ namespace OpenHomeEnergyManager.Infrastructure.Modules.Tesla
         {
             if (turnOn)
             {
-                await _teslaClient.WakeUp();
-                await _teslaClient.StartCharging();
+                await _teslaClient.WakeUp(_vehicleId);
+                await _teslaClient.StartCharging(_vehicleId);
             }
             else
             {
-                await _teslaClient.StopCharging();
+                await _teslaClient.StopCharging(_vehicleId);
             }
+        }
+
+        private void SetConnectedWallboxIsCharging(bool isCharging)
+        {
+            _connectedWallboxIsCharging = isCharging;
         }
 
         public Task StopAsync(CancellationToken cancellationToken)

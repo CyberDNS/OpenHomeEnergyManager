@@ -18,7 +18,8 @@ namespace OpenHomeEnergyManager.Infrastructure.Modules.Tesla
         public IDictionary<string, string> Settings => new Dictionary<string, string>()
         {
             { "E-Mail", "text" },
-            { "Password", "text" }
+            { "Password", "text" },
+            { "Vehicle ID", "text" }
         };
     }
 }

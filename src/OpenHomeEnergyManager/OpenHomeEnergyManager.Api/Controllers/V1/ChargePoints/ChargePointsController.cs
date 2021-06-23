@@ -59,7 +59,8 @@ namespace OpenHomeEnergyManager.Api.Controllers.V1.ChargePoints
             string filename = $"chargepoint_{id}";
             var folderPath = Path.Combine(_env.ContentRootPath, "data", "images");
 
-            var filenameWithExtension = Directory.GetFiles(folderPath, $"{filename}.*").SingleOrDefault();
+            // TODO: Should be SingleOrDefault, but before files should be managed correctly jpg vs jpeg vs png
+            var filenameWithExtension = Directory.GetFiles(folderPath, $"{filename}.*").FirstOrDefault();
             if (filenameWithExtension is null) { return null; }
 
             return $"{Path.GetFileName(filenameWithExtension)}?{random.Next(0, 100000)}";

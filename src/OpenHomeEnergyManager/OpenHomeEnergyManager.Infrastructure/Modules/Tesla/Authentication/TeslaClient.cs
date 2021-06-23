@@ -7,6 +7,7 @@ using System.Net.Http.Json;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using OpenHomeEnergyManager.Domain.Model.VehicleAggregate;
 using OpenHomeEnergyManager.Infrastructure.Modules.Tesla.Authentication.Dtos;
 using Polly;
 
@@ -28,19 +29,18 @@ namespace OpenHomeEnergyManager.Infrastructure.Modules.Tesla.Authentication
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
         }
 
-        public async Task<ChargeStateDto> GetChargeState()
+        public async Task<ChargeStateDto> GetChargeState(string vehicleId)
         {
-            string query = "vehicles/151458224580/data_request/charge_state";
+            string query = $"vehicles/{vehicleId}/data_request/charge_state";
             var response = await _httpClient.GetAsync(query);
             response.EnsureSuccessStatusCode();
 
             var dto = await response.Content.ReadFromJsonAsync<ChargeStateDto>();
             return dto;
         }
-
-        public async Task<VehicleDto> GetVehicle()
+        public async Task<VehicleDto> GetVehicle(string vehicleId)
         {
-            string query = "vehicles/151458224580";
+            string query = $"vehicles/{vehicleId}";
             var response = await _httpClient.GetAsync(query);
             response.EnsureSuccessStatusCode();
 
@@ -48,9 +48,9 @@ namespace OpenHomeEnergyManager.Infrastructure.Modules.Tesla.Authentication
             return dto;
         }
 
-        public async Task WakeUp()
+        public async Task WakeUp(string vehicleId)
         {
-            string query = "vehicles/151458224580/wake_up";
+            string query = $"vehicles/{vehicleId}/wake_up";
 
             int retryCountdown = 6;
             bool isOnline = false;
@@ -68,16 +68,16 @@ namespace OpenHomeEnergyManager.Infrastructure.Modules.Tesla.Authentication
             } while (!isOnline);
         }
 
-        public async Task StartCharging()
+        public async Task StartCharging(string vehicleId)
         {
-            string query = "vehicles/151458224580/command/charge_start";
+            string query = $"vehicles/{vehicleId}/command/charge_start";
             var response = await _httpClient.PostAsync(query, null);
             response.EnsureSuccessStatusCode();
         }
 
-        public async Task StopCharging()
+        public async Task StopCharging(string vehicleId)
         {
-            string query = "vehicles/151458224580/command/charge_stop";
+            string query = $"vehicles/{vehicleId}/command/charge_stop";
             var response = await _httpClient.PostAsync(query, null);
             response.EnsureSuccessStatusCode();
         }

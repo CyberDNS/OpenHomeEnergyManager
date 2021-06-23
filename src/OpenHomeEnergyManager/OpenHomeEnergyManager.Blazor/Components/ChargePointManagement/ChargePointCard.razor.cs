@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Timers;
@@ -34,6 +35,14 @@ namespace OpenHomeEnergyManager.Blazor.Components.ChargePointManagement
 		private Timer _timer;
 
 		private VehicleDto _vehicle;
+		private ChartOptions _chartOptions = new ChartOptions();
+
+		public List<ChartSeries> Series = new List<ChartSeries>()
+	{
+		new ChartSeries() { Name = "Series 1", Data = new double[] { 90, 79, 72, 69, 62, 62, 55, 65, 70 } },
+		new ChartSeries() { Name = "Series 2", Data = new double[] { 35, 41, 35, 51, 49, 62, 69, 91, 148 } },
+	};
+		public string[] XAxisLabels = { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep" };
 
 		protected override void OnInitialized()
 		{
@@ -41,6 +50,9 @@ namespace OpenHomeEnergyManager.Blazor.Components.ChargePointManagement
 			_timer.Interval = TimeSpan.FromSeconds(5).TotalMilliseconds;
 			_timer.Elapsed += TimerElapsed;
 			_timer.Enabled = true;
+
+			_chartOptions.DisableLegend = true;
+			_chartOptions.InterpolationOption = InterpolationOption.NaturalSpline;
 		}
 
         protected override async Task OnParametersSetAsync()

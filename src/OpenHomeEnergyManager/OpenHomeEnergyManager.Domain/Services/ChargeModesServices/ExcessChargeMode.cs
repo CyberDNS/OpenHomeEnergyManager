@@ -71,24 +71,31 @@ namespace OpenHomeEnergyManager.Domain.Services.ChargeModesServices
             {
                 var minutesAfterLastStop = (DateTime.UtcNow - _data.StoppedChargingAt).TotalMinutes;
 
-                _logger.LogInformation("Start charging in {Minutes}", Math.Round(5 - minutesAfterLastStop, 2));
-
-                if ((isNotCharging) && (minutesAfterLastStop > 5))
+                if (isNotCharging)
                 {
-                    _logger.LogInformation("Starting charge / Minutes after last stop: {minutesAfterLastStop}", minutesAfterLastStop);
-                    await StartCharging(chargePoint, vehicle);
-                }
+                    _logger.LogInformation("Start charging in {Minutes}", Math.Round(5 - minutesAfterLastStop, 2));
+
+                    if ((minutesAfterLastStop > 5))
+                    {
+                        _logger.LogInformation("Starting charge / Minutes after last stop: {minutesAfterLastStop}", minutesAfterLastStop);
+                        await StartCharging(chargePoint, vehicle);
+                        _data.StartedChargingAt = DateTime.UtcNow;
+                    }
+                } 
             }
             else if (importedPower > 3 * 230)
             {
                 var importingSinceMinutes = (DateTime.UtcNow - _data.LastImportedAt.Value).TotalMinutes;
 
-                _logger.LogInformation("Stop charging in {Minutes}", Math.Round(10 - importingSinceMinutes, 2));
-
-                if (isCharging && importingSinceMinutes > 10)
+                if (isCharging)
                 {
-                    _logger.LogInformation("Stopping charge / Importing since minutes: {importingSinceMinutes}", importingSinceMinutes);
-                    await StopCharging(chargePoint, vehicle);
+                    _logger.LogInformation("Stop charging in {Minutes}", Math.Round(10 - importingSinceMinutes, 2));
+
+                    if (importingSinceMinutes > 10)
+                    {
+                        _logger.LogInformation("Stopping charge / Importing since minutes: {importingSinceMinutes}", importingSinceMinutes);
+                        await StopCharging(chargePoint, vehicle);
+                    }
                 }
             }
 

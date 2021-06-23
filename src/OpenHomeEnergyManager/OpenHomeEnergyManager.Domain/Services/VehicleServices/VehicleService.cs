@@ -32,8 +32,14 @@ namespace OpenHomeEnergyManager.Domain.Services.VehicleServices
 
         public void SetIsCharging(int moduleId, bool turnOn)
         {
-            var hassModuleService = _moduleServiceRegistry.FindById(moduleId);
-            hassModuleService.GetCapability<SetIsChargingCapability>("SET_IS_CHARGING").Set(turnOn);
+            var moduleService = _moduleServiceRegistry.FindById(moduleId);
+            moduleService.GetCapability<SetIsChargingCapability>("SET_IS_CHARGING").Set(turnOn);
+        }
+
+        public void SetIsConnectedWallboxCharging(int moduleId, bool isCharging)
+        {
+            var moduleService = _moduleServiceRegistry.FindById(moduleId);
+            moduleService.GetCapability<SetIsChargingCapability>("SET_CONNECTED_WALLBOX_IS_CHARGING").Set(isCharging);
         }
     }
 }
