@@ -28,13 +28,13 @@ namespace OpenHomeEnergyManager.Domain.Services.ChargeModesServices
         public async Task LoopAsync(ChargePoint chargePoint)
         {
             var chargeMode = GetChargeMode(chargePoint.CurrentChargeMode);
-            if ((chargeMode is not null) &&
-                (chargePoint.ModuleId.HasValue) &&
+
+            if ((chargePoint.ModuleId.HasValue) &&
                 (chargePoint.VehicleId.HasValue) &&
                 _chargePointService.GetCurrentData(chargePoint.ModuleId.Value).IsPlugged)
             {
                 var vehicle = await _vehicleRepository.FindByIdAsync(chargePoint.VehicleId.Value);
-                await chargeMode.LoopAsync(chargePoint, vehicle);
+                if (chargeMode is not null) { await chargeMode.LoopAsync(chargePoint, vehicle); }
             }
         }
 
@@ -51,6 +51,16 @@ namespace OpenHomeEnergyManager.Domain.Services.ChargeModesServices
                 default:
                     return null;
             }
+        }
+
+        private IEnumerable<ChargeModes> PriorityChargeModes()
+        {
+            return new ChargeModes[]
+            {
+                ChargeModes.DirectTarget,
+                ChargeModes.PlannedTarget,
+                ChargeModes.NightTarget
+            };
         }
     }
 }

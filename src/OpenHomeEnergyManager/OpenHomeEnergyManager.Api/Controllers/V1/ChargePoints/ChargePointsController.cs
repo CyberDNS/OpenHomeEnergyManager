@@ -11,7 +11,7 @@ using OpenHomeEnergyManager.Api.Controllers.V1.ChargePoints.Queries;
 using OpenHomeEnergyManager.Domain.Model.ChargePointAggregate;
 using OpenHomeEnergyManager.Domain.Services.ChargeModesServices;
 using OpenHomeEnergyManager.Domain.Services.ChargePointServices;
-
+using OpenHomeEnergyManager.Domain.Services.DataHistorizationServices;
 
 namespace OpenHomeEnergyManager.Api.Controllers.V1.ChargePoints
 {
@@ -22,14 +22,20 @@ namespace OpenHomeEnergyManager.Api.Controllers.V1.ChargePoints
         private readonly ILogger _logger;
         private readonly IChargePointRepository _chargePointRepository;
         private readonly ChargePointService _chargePointService;
+        private readonly DataHistorizationService _dataHistorizationService;
         private readonly IMapper _mapper;
         private readonly IWebHostEnvironment _env;
 
-        public ChargePointsController(ILogger<ChargePointsController> logger, IChargePointRepository chargePointRepository, ChargePointService chargePointService, IMapper mapper, IWebHostEnvironment env)
+        public ChargePointsController(ILogger<ChargePointsController> logger, 
+            IChargePointRepository chargePointRepository, 
+            ChargePointService chargePointService, 
+            DataHistorizationService dataHistorizationService,
+            IMapper mapper, IWebHostEnvironment env)
         {
             _logger = logger;
             _chargePointRepository = chargePointRepository;
             _chargePointService = chargePointService;
+            _dataHistorizationService = dataHistorizationService;
             _mapper = mapper;
             _env = env;
         }
@@ -84,6 +90,16 @@ namespace OpenHomeEnergyManager.Api.Controllers.V1.ChargePoints
             var current = _mapper.Map<ChargePointDatasetDto>(_chargePointService.GetCurrentData(chargePoint.ModuleId.Value));
 
             return Ok(current);
+        }
+
+        [HttpGet("{id}/Data/Historization")]
+        public IActionResult GetHistorizationData(int id, [FromQuery] int minutes = 10)
+        {
+            var historizationDataset = _dataHistorizationService.GetHistorizationDataset<ChargePointDataset>(id, TimeSpan.FromSeconds(5));
+
+            var result = historizationDataset.GetData(TimeSpan.FromMinutes(minutes)).Select(d => _mapper.Map<ChargePointDatasetDto>(d)).ToArray();
+
+            return Ok(result);
         }
 
         [HttpPut("{id}/Commands/SetCurrent")]

@@ -6,13 +6,9 @@ using System.Threading.Tasks;
 
 namespace OpenHomeEnergyManager.Domain.Services.ChargeModesServices
 {
-    public enum ChargeModes
+    public interface IRuleBasedChargeMode : IChargeMode
     {
-        Stop,
-        Direct,
-        Excess,
-        DirectTarget,
-        NightTarget,
-        PlannedTarget
+
+        public bool EvaluateRule();
     }
 }

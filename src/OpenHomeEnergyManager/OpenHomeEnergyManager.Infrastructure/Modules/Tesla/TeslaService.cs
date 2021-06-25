@@ -67,34 +67,48 @@ namespace OpenHomeEnergyManager.Infrastructure.Modules.Tesla
 
         private async void DoWork(object state)
         {
-            if (!_connectedWallboxIsCharging) { return; }
-
-            var vehicle = await _teslaClient.GetVehicle(_vehicleId);
-
-            if (vehicle.Response.State.Equals("online", StringComparison.OrdinalIgnoreCase))
+            try
             {
-                var chargeState = await _teslaClient.GetChargeState(_vehicleId);
-                if (chargeState is not null)
-                {
-                    GetCapability<StateOfChargeCapability>("SOC").Value = Convert.ToDecimal(chargeState.Response.BatteryLevel, CultureInfo.InvariantCulture.NumberFormat);
-                    GetCapability<ChargeLimitCapability>("CHARGE_LIMIT").Value = Convert.ToDecimal(chargeState.Response.ChargeLimitSoc, CultureInfo.InvariantCulture.NumberFormat);
+                if (!_connectedWallboxIsCharging) { return; }
 
-                    GetCapability<IsChargingCapability>("IS_CHARGING").Value = chargeState.Response.ChargingState.Equals("Charging", StringComparison.OrdinalIgnoreCase);
-                    GetCapability<IsChargedToChargeLimitCapability>("IS_CHARGED_TO_CHARGE_LIMIT").Value = chargeState.Response.ChargingState.Equals("Complete", StringComparison.OrdinalIgnoreCase);
+                var vehicle = await _teslaClient.GetVehicle(_vehicleId);
+
+                if (vehicle.Response.State.Equals("online", StringComparison.OrdinalIgnoreCase))
+                {
+                    var chargeState = await _teslaClient.GetChargeState(_vehicleId);
+                    if (chargeState is not null)
+                    {
+                        GetCapability<StateOfChargeCapability>("SOC").Value = Convert.ToDecimal(chargeState.Response.BatteryLevel, CultureInfo.InvariantCulture.NumberFormat);
+                        GetCapability<ChargeLimitCapability>("CHARGE_LIMIT").Value = Convert.ToDecimal(chargeState.Response.ChargeLimitSoc, CultureInfo.InvariantCulture.NumberFormat);
+
+                        GetCapability<IsChargingCapability>("IS_CHARGING").Value = chargeState.Response.ChargingState.Equals("Charging", StringComparison.OrdinalIgnoreCase);
+                        GetCapability<IsChargedToChargeLimitCapability>("IS_CHARGED_TO_CHARGE_LIMIT").Value = chargeState.Response.ChargingState.Equals("Complete", StringComparison.OrdinalIgnoreCase);
+                    }
                 }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Exception!");
             }
         }
 
         private async void SetIsCharging(bool turnOn)
         {
-            if (turnOn)
+            try
             {
-                await _teslaClient.WakeUp(_vehicleId);
-                await _teslaClient.StartCharging(_vehicleId);
+                if (turnOn)
+                {
+                    await _teslaClient.WakeUp(_vehicleId);
+                    await _teslaClient.StartCharging(_vehicleId);
+                }
+                else
+                {
+                    await _teslaClient.StopCharging(_vehicleId);
+                }
             }
-            else
+            catch (Exception ex)
             {
-                await _teslaClient.StopCharging(_vehicleId);
+                _logger.LogError(ex, "Exception!");
             }
         }
 

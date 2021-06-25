@@ -11,6 +11,7 @@ using OpenHomeEnergyManager.Api.Controllers.V1.Vehicles.Queries;
 using OpenHomeEnergyManager.Domain.Model.ChargePointAggregate;
 using OpenHomeEnergyManager.Domain.Model.VehicleAggregate;
 using OpenHomeEnergyManager.Domain.Services.ChargePointServices;
+using OpenHomeEnergyManager.Domain.Services.DataHistorizationServices;
 using OpenHomeEnergyManager.Domain.Services.VehicleServices;
 
 namespace OpenHomeEnergyManager.Api.Controllers.V1.Vehicles
@@ -21,13 +22,15 @@ namespace OpenHomeEnergyManager.Api.Controllers.V1.Vehicles
     {
         private readonly IVehicleRepository _vehicleRepository;
         private readonly VehicleService _vehicleService;
+        private readonly DataHistorizationService _dataHistorizationService;
         private readonly IMapper _mapper;
         private readonly IWebHostEnvironment _env;
 
-        public VehiclesController(IVehicleRepository vehicleRepository, VehicleService vehicleService, IMapper mapper, IWebHostEnvironment env)
+        public VehiclesController(IVehicleRepository vehicleRepository, VehicleService vehicleService, DataHistorizationService dataHistorizationService, IMapper mapper, IWebHostEnvironment env)
         {
             _vehicleRepository = vehicleRepository;
             _vehicleService = vehicleService;
+            _dataHistorizationService = dataHistorizationService;
             _mapper = mapper;
             _env = env;
         }
@@ -72,6 +75,17 @@ namespace OpenHomeEnergyManager.Api.Controllers.V1.Vehicles
 
             return Ok(current);
         }
+
+        [HttpGet("{id}/Data/Historization")]
+        public IActionResult GetHistorizationData(int id, [FromQuery] int minutes = 10)
+{
+            var historizationDataset = _dataHistorizationService.GetHistorizationDataset<VehicleDataset>(id, TimeSpan.FromSeconds(20));
+
+            var result = historizationDataset.GetData(TimeSpan.FromMinutes(minutes)).Select(d => _mapper.Map<VehicleDatasetDto>(d)).ToArray();
+
+            return Ok(result);
+        }
+
 
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] AddVehicleDto command)

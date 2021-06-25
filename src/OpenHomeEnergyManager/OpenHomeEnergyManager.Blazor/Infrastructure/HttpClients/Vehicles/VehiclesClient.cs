@@ -48,6 +48,16 @@ namespace OpenHomeEnergyManager.Blazor.Infrastructure.HttpClients.Vehicles
         }
 
 
+        public async Task<IEnumerable<VehicleDatasetDto>> GetHistorizationDataAsync(int id, TimeSpan timeSpan, CancellationToken cancellationToken = default)
+        {
+            var response = await _httpClient.GetAsync($"{id}/Data/Historization?minutes={timeSpan.TotalMinutes}", cancellationToken);
+            response.EnsureSuccessStatusCode();
+
+            var stringContent = await response.Content.ReadAsStringAsync();
+            return JsonConvert.DeserializeObject<IEnumerable<VehicleDatasetDto>>(stringContent);
+        }
+
+
         public async Task AddAsync(AddVehicleDto command, CancellationToken cancellationToken = default)
         {
             var response = await _httpClient.PostAsync("", new StringContent(JsonConvert.SerializeObject(command), Encoding.UTF8, "application/json"), cancellationToken);

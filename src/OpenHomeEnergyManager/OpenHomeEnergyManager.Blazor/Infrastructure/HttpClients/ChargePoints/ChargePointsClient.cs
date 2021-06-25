@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Net.Http;
 using System.Text;
 using System.Threading;
@@ -45,6 +46,14 @@ namespace OpenHomeEnergyManager.Blazor.Infrastructure.HttpClients.ChargePoints
             return JsonConvert.DeserializeObject<ChargePointDatasetDto>(stringContent);
         }
 
+        public async Task<IEnumerable<ChargePointDatasetDto>> GetHistorizationDataAsync(int id, TimeSpan timeSpan, CancellationToken cancellationToken = default)
+        {
+            var response = await _httpClient.GetAsync($"{id}/Data/Historization?minutes={timeSpan.TotalMinutes}", cancellationToken);
+            response.EnsureSuccessStatusCode();
+
+            var stringContent = await response.Content.ReadAsStringAsync();
+            return JsonConvert.DeserializeObject<IEnumerable<ChargePointDatasetDto>>(stringContent);
+        }
 
         public async Task AddAsync(AddChargePointDto command, CancellationToken cancellationToken = default)
         {

@@ -34,33 +34,36 @@
 		{
 	  <MudGrid>
 	   <MudItem xs="4" Class="d-flex py-2 px-1">
-		<MudPaper Class="flex-grow-1">
+		<MudPaper Class="flex-grow-1 d-flex align-center justify-center">
 		 <MudGrid>
-		  <MudItem xs="6">
+		  <MudItem xs="6" Class="d-flex justify-end align-center">
 								@switch (PhaseCount)
 								{
-									case 1:
-				   <MudIcon Icon="@Icons.Material.Filled.Filter1" />
-										break;
 									case 2:
-				   <MudIcon Icon="@Icons.Material.Filled.Filter2" />
+				   <MudIcon Icon="@Icons.Material.Filled.Filter2" Size="Size.Large" />
 										break;
 									case 3:
-				   <MudIcon Icon="@Icons.Material.Filled.Filter3" />
+				   <MudIcon Icon="@Icons.Material.Filled.Filter3" Size="Size.Large" />
 										break;
 									default:
+				   <MudIcon Icon="@Icons.Material.Filled.Filter1" Size="Size.Large" />
 										break;
 								}
 		  </MudItem>
-		  <MudItem xs="6"><MudText Typo="Typo.button">@Current</MudText></MudItem>
+		  <MudItem xs="6" Class="d-flex justify-start align-center"><MudText Typo="Typo.h3">@Current</MudText>&nbsp;<MudText Typo="Typo.h5">A</MudText></MudItem>
+		  <MudItem xs="12" Class="d-flex justify-center align-center"><MudText Typo="Typo.h4">@Power</MudText>&nbsp;<MudText Typo="Typo.h5">W</MudText></MudItem>
 		 </MudGrid>
 		</MudPaper>
 	   </MudItem>
 	   <MudItem xs="4" Class="d-flex py-2 px-1">
-		<MudPaper Class="flex-grow-1"><MudChart ChartType="ChartType.Line" ChartSeries="@Series" XAxisLabels="@XAxisLabels" Width="100%" ChartOptions="_chartOptions" Class="small-power-chart"></MudChart></MudPaper>
+		<MudPaper Class="flex-grow-1">
+		 <MudChart ChartType="ChartType.Line" ChartSeries="@ChargePointSeries" Width="100%" ChartOptions="_chartOptions" Class="small-power-chart"></MudChart>
+		</MudPaper>
 	   </MudItem>
 	   <MudItem xs="4" Class="d-flex py-2 px-1">
-		<MudPaper Class="flex-grow-1"></MudPaper>
+		<MudPaper Class="flex-grow-1">
+			<MudChart ChartType="ChartType.Line" ChartSeries="@VehicleSeries" Width="100%" ChartOptions="_chartOptions" Class="small-power-chart"></MudChart>
+		</MudPaper>
 	   </MudItem>
 	  </MudGrid>
 

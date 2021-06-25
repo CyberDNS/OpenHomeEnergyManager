@@ -13,6 +13,7 @@ using OpenHomeEnergyManager.Domain.Model.ModuleAggregate;
 using OpenHomeEnergyManager.Domain.Model.VehicleAggregate;
 using OpenHomeEnergyManager.Domain.Services.ChargeModesServices;
 using OpenHomeEnergyManager.Domain.Services.ChargePointServices;
+using OpenHomeEnergyManager.Domain.Services.DataHistorizationServices;
 using OpenHomeEnergyManager.Domain.Services.VehicleServices;
 using OpenHomeEnergyManager.Infrastructure.ChargeModes;
 using OpenHomeEnergyManager.Infrastructure.DataHistorization;
@@ -63,7 +64,9 @@ namespace OpenHomeEnergyManager.Api
 
             services.AddModuleServices();
             services.AddHostedService<ChargeModesHostedService>();
-            //services.AddHostedService<DataHistorizationHostedService>();
+            services.AddHostedService<DataHistorizationHostedService>();
+
+            services.AddSingleton<DataHistorizationService>();
 
             services.AddScoped<IChargeModesService, ChargeModesService>();
             services.AddScoped<StopChargeMode>();
