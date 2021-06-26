@@ -16,14 +16,14 @@ namespace OpenHomeEnergyManager.Domain.Services.ChargeModesServices
     {
         private DirectChargeModeData _data = new DirectChargeModeData();
 
-        public ChargeModes ChargeMode => ChargeModes.Direct;
+        public override ChargeModes ChargeMode => ChargeModes.Direct;
 
         public DirectChargeMode(ILogger<ChargeModeBase> logger, ChargePointService chargePointService, VehicleService vehicleService)
             : base(logger, chargePointService, vehicleService)
         {
         }
 
-        public async Task LoopAsync(ChargePoint chargePoint, Vehicle vehicle)
+        public override async Task LoopAsync(ChargePoint chargePoint, Vehicle vehicle)
         {
             ChargePointDataset chargePointData = _chargePointService.GetCurrentData(chargePoint.ModuleId.Value);
             VehicleDataset vehicleData = _vehicleService.GetCurrentData(vehicle.ModuleId.Value);

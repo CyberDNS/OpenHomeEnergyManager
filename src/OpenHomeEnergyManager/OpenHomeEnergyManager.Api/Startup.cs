@@ -73,6 +73,9 @@ namespace OpenHomeEnergyManager.Api
             services.AddScoped<DirectChargeMode>();
             services.AddScoped<ExcessChargeMode>();
 
+            services.AddScoped<DirectTargetChargeMode>();
+            services.AddScoped<PlannedTargetChargeMode>();
+
             services.AddHttpClient<HomeAssistantHttpClient>();
             services.AddHttpClient<Infrastructure.Modules.Tesla.Authentication.LoginClient>()
                 .ConfigurePrimaryHttpMessageHandler(() =>

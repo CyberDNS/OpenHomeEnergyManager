@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace OpenHomeEnergyManager.Domain.Services.ChargeModesServices
 {
-    public class ChargeModeBase
+    public abstract class ChargeModeBase : IChargeMode
     {
         protected readonly ILogger<ChargeModeBase> _logger;
         protected readonly ChargePointService _chargePointService;
@@ -22,6 +22,10 @@ namespace OpenHomeEnergyManager.Domain.Services.ChargeModesServices
             _chargePointService = chargePointService;
             _vehicleService = vehicleService;
         }
+
+        public abstract ChargeModes ChargeMode { get; }
+
+        public abstract Task LoopAsync(ChargePoint chargePoint, Vehicle vehicle);
 
         protected bool GetIsCharging(ChargePoint chargePoint, Vehicle vehicle)
         {

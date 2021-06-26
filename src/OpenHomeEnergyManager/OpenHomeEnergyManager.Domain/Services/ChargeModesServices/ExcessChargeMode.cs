@@ -20,7 +20,7 @@ namespace OpenHomeEnergyManager.Domain.Services.ChargeModesServices
 
         private readonly IModuleService _smaHomeManagerService;
 
-        public ChargeModes ChargeMode => ChargeModes.Excess;
+        public override ChargeModes ChargeMode => ChargeModes.Excess;
 
         public ExcessChargeMode(ILogger<ExcessChargeMode> logger, ChargePointService chargePointService, VehicleService vehicleService, IModuleServiceRegistry moduleServiceRegistry)
             : base(logger, chargePointService, vehicleService)
@@ -28,7 +28,7 @@ namespace OpenHomeEnergyManager.Domain.Services.ChargeModesServices
             _smaHomeManagerService = moduleServiceRegistry.FindById(9);
         }
 
-        public async Task LoopAsync(ChargePoint chargePoint, Vehicle vehicle)
+        public override async Task LoopAsync(ChargePoint chargePoint, Vehicle vehicle)
         {
             int exportedPower = _smaHomeManagerService.GetCapability<PowerCapability>("EXPORTED_POWER").Value;
             int importedPower = _smaHomeManagerService.GetCapability<PowerCapability>("IMPORTED_POWER").Value;

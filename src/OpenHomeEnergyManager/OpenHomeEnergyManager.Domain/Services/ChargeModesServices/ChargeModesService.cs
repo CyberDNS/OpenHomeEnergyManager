@@ -34,6 +34,17 @@ namespace OpenHomeEnergyManager.Domain.Services.ChargeModesServices
                 _chargePointService.GetCurrentData(chargePoint.ModuleId.Value).IsPlugged)
             {
                 var vehicle = await _vehicleRepository.FindByIdAsync(chargePoint.VehicleId.Value);
+
+                var targetChargeMode = PriorityChargeModes().Select(c =>
+                {
+                    var cM = GetChargeMode(c);
+                    if (cM is null) { return null; }
+                    if (cM is IRuleBasedChargeMode rBCM) { if (rBCM.EvaluateRule(chargePoint, vehicle)) { return rBCM; } }
+                    return null;
+                }).Where(c => c is not null).FirstOrDefault();
+
+                if (targetChargeMode is not null) { chargeMode = targetChargeMode; }
+
                 if (chargeMode is not null) { await chargeMode.LoopAsync(chargePoint, vehicle); }
             }
         }
@@ -48,6 +59,10 @@ namespace OpenHomeEnergyManager.Domain.Services.ChargeModesServices
                     return _serviceProvider.GetRequiredService<DirectChargeMode>();
                 case ChargeModes.Excess:
                     return _serviceProvider.GetRequiredService<ExcessChargeMode>();
+                case ChargeModes.DirectTarget:
+                    return _serviceProvider.GetRequiredService<DirectTargetChargeMode>();
+                case ChargeModes.PlannedTarget:
+                    return _serviceProvider.GetRequiredService<PlannedTargetChargeMode>();
                 default:
                     return null;
             }

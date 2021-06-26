@@ -19,10 +19,10 @@ namespace OpenHomeEnergyManager.Domain.Services.ChargeModesServices
         {
         }
 
-        public ChargeModes ChargeMode => ChargeModes.Stop;
+        public override ChargeModes ChargeMode => ChargeModes.Stop;
 
 
-        public async Task LoopAsync(ChargePoint chargePoint, Vehicle vehicle)
+        public override async Task LoopAsync(ChargePoint chargePoint, Vehicle vehicle)
         {
             ChargePointDataset chargePointData = _chargePointService.GetCurrentData(chargePoint.ModuleId.Value);
             VehicleDataset vehicleData = _vehicleService.GetCurrentData(vehicle.ModuleId.Value);

@@ -27,6 +27,8 @@ namespace OpenHomeEnergyManager.Infrastructure.Modules.Tesla
 
         private TokenMaterial _tokenMaterial;
 
+        private bool _isInitialized;
+
 
         public TeslaService(ILogger<TeslaService> logger, LoginClient loginClient, TeslaClient teslaClient)
         {
@@ -58,8 +60,15 @@ namespace OpenHomeEnergyManager.Infrastructure.Modules.Tesla
 
         public async Task StartAsync(CancellationToken cancellationToken)
         {
+            _isInitialized = false;
             _tokenMaterial = await _loginClient.Login(_email, _password);
             _teslaClient.SetAccessToken(_tokenMaterial.AccessToken);
+
+            var vehicle = await _teslaClient.GetVehicle(_vehicleId);
+            if (!vehicle.Response.State.Equals("online", StringComparison.OrdinalIgnoreCase))
+            {
+                await _teslaClient.WakeUp(_vehicleId);
+            }
 
             _timer = new Timer(DoWork, null, TimeSpan.Zero, TimeSpan.FromSeconds(15));
 
@@ -69,7 +78,7 @@ namespace OpenHomeEnergyManager.Infrastructure.Modules.Tesla
         {
             try
             {
-                if (!_connectedWallboxIsCharging) { return; }
+                if (_isInitialized && !_connectedWallboxIsCharging) { return; }
 
                 var vehicle = await _teslaClient.GetVehicle(_vehicleId);
 
@@ -83,6 +92,8 @@ namespace OpenHomeEnergyManager.Infrastructure.Modules.Tesla
 
                         GetCapability<IsChargingCapability>("IS_CHARGING").Value = chargeState.Response.ChargingState.Equals("Charging", StringComparison.OrdinalIgnoreCase);
                         GetCapability<IsChargedToChargeLimitCapability>("IS_CHARGED_TO_CHARGE_LIMIT").Value = chargeState.Response.ChargingState.Equals("Complete", StringComparison.OrdinalIgnoreCase);
+                       
+                        _isInitialized = true;
                     }
                 }
             }
