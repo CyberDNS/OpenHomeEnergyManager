@@ -44,11 +44,6 @@ namespace OpenHomeEnergyManager.Blazor.Components.ChargePointManagement
             new ChartSeries() { Name = "3.6 kW", Data = new double[4] { 3680, 3680, 3680, 3680 } },
         };
 
-        public List<ChartSeries> VehicleSeries = new List<ChartSeries>()
-        {
-            new ChartSeries() { Name = "Soc", Data = new double[4] { 0, 0, 0, 0 } },
-            new ChartSeries() { Name = "Limit", Data = new double[4] { 0, 0, 0, 0 } },
-        };
 
         protected override void OnInitialized()
         {
@@ -106,17 +101,6 @@ namespace OpenHomeEnergyManager.Blazor.Components.ChargePointManagement
                         new ChartSeries() { Name = "3.6 kW", Data = new double[4] { 3680, 3680, 3680, 3680 } },
                     };
                     ChargePointSeries = newSeries;
-                }
-
-                var historizationVehicleData = await _vehiclesClient.GetHistorizationDataAsync(_vehicle.Id, TimeSpan.FromMinutes(10));
-                if (historizationVehicleData.Count() >= 4)
-                {
-                    List<ChartSeries> newSeries = new List<ChartSeries>()
-                    {
-                        new ChartSeries() { Name = "Soc", Data = historizationVehicleData.Select(d => Convert.ToDouble(d.StateOfCharge)).ToArray() },
-                        new ChartSeries() { Name = "Limit", Data = historizationVehicleData.Select(d => Convert.ToDouble(d.ChargeLimit)).ToArray() },
-                    };
-                    VehicleSeries = newSeries;
                 }
             }
             else

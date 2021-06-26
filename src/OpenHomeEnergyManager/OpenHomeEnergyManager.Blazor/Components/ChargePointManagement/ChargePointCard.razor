@@ -61,29 +61,11 @@
 		</MudPaper>
 	   </MudItem>
 	   <MudItem xs="4" Class="d-flex py-2 px-1">
-		<MudPaper Class="flex-grow-1">
-			<MudChart ChartType="ChartType.Line" ChartSeries="@VehicleSeries" Width="100%" ChartOptions="_chartOptions" Class="small-power-chart"></MudChart>
+		<MudPaper Class="flex-grow-1 d-flex justify-center align-center">
+		 <MudText Typo="Typo.h4">@_vehicleNow.StateOfCharge / @_vehicleNow.ChargeLimit</MudText>&nbsp;<MudText Typo="Typo.h5">%</MudText>
 		</MudPaper>
 	   </MudItem>
 	  </MudGrid>
-
-			@*<MudContainer Class="px-0 mt-3 d-flex justify-space-between">
-				<MudBadge Content="@("A")" Color="Color.Secondary" Overlap="true">
-				<MudChip Label="true" Color="Color.Dark" Variant="Variant.Outlined" Style="min-width: 75px;">
-				<MudText Typo="Typo.caption">@(PhaseCount)x</MudText> <MudText Typo="Typo.button">@Current</MudText>
-				</MudChip>
-				</MudBadge>
-				<MudBadge Content="@("W")" Color="Color.Secondary" Overlap="true">
-				<MudChip Label="true" Color="Color.Dark" Variant="Variant.Outlined" Style="min-width: 75px;">
-				<MudText Typo="Typo.button">@Power</MudText>
-				</MudChip>
-				</MudBadge>
-				<MudBadge Content="@("%")" Color="Color.Secondary" Overlap="true">
-				<MudChip Label="true" Color="Color.Dark" Variant="Variant.Outlined" Style="min-width: 75px;">
-				<MudText Typo="Typo.button">@_vehicleNow.StateOfCharge / @_vehicleNow.ChargeLimit</MudText>
-				</MudChip>
-				</MudBadge>
-				</MudContainer>*@
 		}
  </MudCardContent>
  <MudCardActions>
