@@ -63,8 +63,8 @@ namespace OpenHomeEnergyManager.Api
             services.AddAutoMapper(typeof(Startup));
 
             services.AddModuleServices();
-            services.AddHostedService<ChargeModesHostedService>();
-            services.AddHostedService<DataHistorizationHostedService>();
+            //services.AddHostedService<ChargeModesHostedService>();
+            //services.AddHostedService<DataHistorizationHostedService>();
 
             services.AddSingleton<DataHistorizationService>();
 
@@ -76,27 +76,27 @@ namespace OpenHomeEnergyManager.Api
             services.AddScoped<DirectTargetChargeMode>();
             services.AddScoped<PlannedTargetChargeMode>();
 
-            services.AddHttpClient<HomeAssistantHttpClient>();
-            services.AddHttpClient<Infrastructure.Modules.Tesla.Authentication.LoginClient>()
-                .ConfigurePrimaryHttpMessageHandler(() =>
-                {
-                    return new HttpClientHandler()
-                    {
-                        AllowAutoRedirect = false
-                    };
-                });
+            //services.AddHttpClient<HomeAssistantHttpClient>();
+            //services.AddHttpClient<Infrastructure.Modules.Tesla.Authentication.LoginClient>()
+            //    .ConfigurePrimaryHttpMessageHandler(() =>
+            //    {
+            //        return new HttpClientHandler()
+            //        {
+            //            AllowAutoRedirect = false
+            //        };
+            //    });
 
-            services.AddHttpClient<TeslaClient>(c => c.BaseAddress = new Uri("https://owner-api.teslamotors.com/api/1/"))
-                .SetHandlerLifetime(TimeSpan.FromMinutes(5))
-                .AddPolicyHandler(HttpPolicyExtensions
-                                    .HandleTransientHttpError()
-                                    .OrResult(msg => msg.StatusCode == System.Net.HttpStatusCode.RequestTimeout ||
-                                                     msg.StatusCode == System.Net.HttpStatusCode.ServiceUnavailable)
-                                    .WaitAndRetryAsync(6, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)))
-                                    );
+            //services.AddHttpClient<TeslaClient>(c => c.BaseAddress = new Uri("https://owner-api.teslamotors.com/api/1/"))
+            //    .SetHandlerLifetime(TimeSpan.FromMinutes(5))
+            //    .AddPolicyHandler(HttpPolicyExtensions
+            //                        .HandleTransientHttpError()
+            //                        .OrResult(msg => msg.StatusCode == System.Net.HttpStatusCode.RequestTimeout ||
+            //                                         msg.StatusCode == System.Net.HttpStatusCode.ServiceUnavailable)
+            //                        .WaitAndRetryAsync(6, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)))
+            //                        );
 
 
-            services.AddApplicationInsightsTelemetry(Configuration["APPINSIGHTS_CONNECTIONSTRING"]);
+            //services.AddApplicationInsightsTelemetry(Configuration["APPINSIGHTS_CONNECTIONSTRING"]);
 
         }
 

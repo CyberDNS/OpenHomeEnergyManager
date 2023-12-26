@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using OpenHomeEnergyManager.Domain.Model.ModuleAggregate;
 using OpenHomeEnergyManager.Domain.Model.ModuleServiceDefinitionAggregate;
 using OpenHomeEnergyManager.Domain.Services.ModuleServices;
@@ -18,11 +19,13 @@ namespace OpenHomeEnergyManager.Infrastructure.Modules
 {
     class ModulesHostedService : IHostedService
     {
+        private readonly ILogger<ModulesHostedService> _logger;
         private readonly IServiceProvider _services;
         private readonly ModuleServiceRegistry _serviceRegistry;
 
-        public ModulesHostedService(IServiceProvider services, IModuleServiceRegistry serviceRegistry)
+        public ModulesHostedService(ILogger<ModulesHostedService> logger, IServiceProvider services, IModuleServiceRegistry serviceRegistry)
         {
+            _logger = logger;
             _services = services;
             _serviceRegistry = (ModuleServiceRegistry)serviceRegistry;
         }
@@ -37,8 +40,15 @@ namespace OpenHomeEnergyManager.Infrastructure.Modules
 
                 foreach (var module in modulesRepository.GetAll().Where(m => m.ModuleServiceDefinitionKey is not null))
                 {
-                    var moduleServiceDefinition = moduleServiceDefinitions[module.ModuleServiceDefinitionKey];
-                    _serviceRegistry.TryRegister(moduleServiceDefinition.Type, module);
+                    if (moduleServiceDefinitions.ContainsKey(module.ModuleServiceDefinitionKey))
+                    {
+                        var moduleServiceDefinition = moduleServiceDefinitions[module.ModuleServiceDefinitionKey];
+                        _serviceRegistry.TryRegister(moduleServiceDefinition.Type, module);
+                    }
+                    else
+                    {
+                        _logger.LogWarning("Module with {ModuleServiceDefinitionKey} not found in ModuleServiceDefinitions", module.ModuleServiceDefinitionKey);
+                    }
                 }
             }
 

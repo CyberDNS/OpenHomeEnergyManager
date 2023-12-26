@@ -77,6 +77,8 @@ namespace OpenHomeEnergyManager.Infrastructure.Modules.SmaHomeManager
 
                                 message += $"[{header.Name} {header.Type}] = ";
 
+                                _logger.LogInformation(message);
+
                                 switch (header.Type)
                                 {
                                     case DataDecoder.DataType.Current:

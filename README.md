@@ -16,6 +16,7 @@ docker-compose.yaml:
         image: cyberdns/openhomeenergymanagerblazor
         environment:
           - ASPNETCORE_ENVIRONMENT=Development
+          - ASPNETCORE_HttpClients__Uris__OpenHomeEnergyManagerApi=http://[Api Server]:5123/api/
         ports:
           - "5000:80"
 

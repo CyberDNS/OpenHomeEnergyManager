@@ -22,10 +22,10 @@ namespace OpenHomeEnergyManager.Infrastructure.Modules
             _moduleServiceDefinitions = new IModuleServiceDefinition[]
             {
                 new SmaHomeManagerServiceDefinition(),
-                new SmaTriPowerServiceDefinition(),
-                new OpenWbServiceDefinition(),
-                new TeslaHomeAssistantServiceDefinition(),
-                new TeslaServiceDefinition()
+                //new SmaTriPowerServiceDefinition(),
+                //new OpenWbServiceDefinition(),
+                //new TeslaHomeAssistantServiceDefinition(),
+                //new TeslaServiceDefinition()
             };
         }
 
